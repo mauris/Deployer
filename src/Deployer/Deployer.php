@@ -258,6 +258,8 @@ abstract class Deployer{
             }
             mkdir('temp');
             
+            ignore_user_abort(true);
+            set_time_limit(0);
             $this->log('Fetching from Git repository');
             $this->execute('cd temp && git init');
             $this->execute(sprintf('cd temp && git remote add origin %s', $url));

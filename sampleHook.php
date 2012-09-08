@@ -1,7 +1,7 @@
 <?php
-include('Deployer/Bootstrap.php');
+include('src/Deployer/Bootstrap.php');
 Deployer\Bootstrap::initialize();
-use Deployer\Deployers\Github as Worker;
+use Deployer\Drivers\Github as Worker;
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('payload', $_POST)){
     $source = json_decode($_POST['payload'], true);
