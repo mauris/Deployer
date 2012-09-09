@@ -3,4 +3,15 @@
 <phpunit 
     colors="true"
     bootstrap="/test/bootstrap.php"
-/>
+>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src/</directory>
+        </whitelist>
+    </filter>
+    <testsuites>
+        <testsuite name="Deployer Test Suite">
+            <directory phpVersion="5.3.0" phpVersionOperator=">=" suffix="Test.php">test/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
