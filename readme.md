@@ -12,6 +12,10 @@ You no longer have to deploy web applications via remote SSH or FTP anymore. Sim
 
 A sample web service / hook script is included as `sampleHook.php`.
 
+##Workflow
+
+![Continuous Integration with Deployer by Sam-Mauris Yong](http://i.imgur.com/UnIMj.png)
+
 ##Setup Guide
 
 Read the [Deployer Setup Guide](https://github.com/thephpdeveloper/Deployer/blob/master/guide.md) for a step-by-step installation guide and explanation on how to use Deployer.
