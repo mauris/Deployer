@@ -10,7 +10,7 @@ Basically what Deployer does is simple:
 
 You no longer have to deploy web applications via remote SSH or FTP anymore. Simply put this script onto your web-server with Git installed and add the web service URL to your project settings.
 
-A sample web service / hook script is included as `sampleHook.php`.
+A sample web service / hook script is included as `example/hook.php`.
 
 ##Workflow
 

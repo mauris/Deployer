@@ -21,10 +21,9 @@ Deployer supports web service hook calls from the following git hosting service 
 
 ##Installation
 
- 1. Download Deployer by clicking the Github ZIP download.
- 2. Extract the contents of the zip file to a new `hook` folder on your web server root.
-    > so assuming that your web server root is at `"/home/user/public_html/"`, you should extract the contents of the zip to `"/home/user/public_html/hook/"`.
- 3. Rename `sampleHook.php` to `hook.php`.  Your hook call URL will then, for example, be at `http://example.com/hook/hook.php`.
+ 1. Download Deployer by clicking the [Github download](https://github.com/thephpdeveloper/Deployer/downloads).
+ 2. Extract the contents of the `src` folder in the zip file to a new `hook` folder on your web server root. *So assuming that your web server root is at `"/home/user/public_html/"`, you should extract the contents of the `src` folder to `"/home/user/public_html/hook/"`.*
+ 3. Copy the file `example/hook.php` to your `hook` folder.  *Your hook call URL will then, for example, be at `http://example.com/hook/hook.php`.*
  4. Open `hook.php` and modify:
    - `use Deployer\Drivers\Github as Worker;` - replace `Github` with the driver class you wish to use.
    - `$deployer = new Worker($source, array('target' => '../'));` - write any additional options in the 2nd parameters.
@@ -49,9 +48,8 @@ Logging of Deployer's operations is by default done by writing to `deploy.log`. 
 
 It is possible to skip deployment on certain commits or only deploy certain commits. The behaviour is set by the option `autoDeploy`.
 
-If `autoDeploy` is set to `true`, all commits are deployed except for those commits with `[skipdeploy]` written in the commit message. 
-
-If `autoDeploy` is set to `false`, only commits with the `[deploy]` written in the commit message will be deployed.
+ - If `autoDeploy` is set to **`true`**, all commits are deployed except for those commits with `[skipdeploy]` written in the commit message. 
+ - If `autoDeploy` is set to **`false`**, only commits with the `[deploy]` written in the commit message will be deployed.
 
 The keywords `[skipdeploy]` and `[deploy]` can be configured through the *constants* in the `Deployer` class.
 
