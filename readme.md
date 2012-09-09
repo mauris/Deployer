@@ -2,6 +2,8 @@
 
 A simple Git web hook and deployment activator for continuous integration.
 
+[![Build Status](https://secure.travis-ci.org/thephpdeveloper/Deployer.png?branch=master)](http://travis-ci.org/thephpdeveloper/Deployer)
+
 Basically what Deployer does is simple:
 
  1. Interpret the data sent by the various Git vendors (i.e. Github, BitBucket) via Web Service / Hook calls
