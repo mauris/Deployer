@@ -61,48 +61,30 @@ class DeployerTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * @covers Deployer\Deployer::validate
-     * @todo Implement testValidate().
      */
     public function testValidate() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertTrue(method_exists($this->object, 'validate'));
     }
 
     /**
      * @covers Deployer\Deployer::log
-     * @todo Implement testLog().
      */
     public function testLog() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertTrue(method_exists($this->object, 'log'));
     }
 
     /**
      * @covers Deployer\Deployer::execute
-     * @todo Implement testExecute().
      */
     public function testExecute() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertTrue(method_exists($this->object, 'execute'));
     }
 
     /**
      * @covers Deployer\Deployer::deploy
-     * @todo Implement testDeploy().
      */
     public function testDeploy() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->assertTrue(method_exists($this->object, 'deploy'));
     }
 
 }
-
-?>
