@@ -35,7 +35,7 @@ class Github extends Deployer {
         $this->log('Validation successful');
     }
     
-    protected function buildUrl(){
+    public function buildUrl(){
         if($this->options['https']){
             $url = 'https://';
             if($this->username){

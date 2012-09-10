@@ -31,6 +31,7 @@ class GithubTest extends \PHPUnit_Framework_TestCase {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
         $object = new Github($source, array('logFile' => null));
         $object->validate();
+        $this->assertEquals('https://github.com/defunkt/github.git', $object->buildUrl());
     }
 
 }

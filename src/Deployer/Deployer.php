@@ -236,7 +236,7 @@ abstract class Deployer{
      * @return string The URL returned
      * @since 1.0
      */
-    protected abstract function buildUrl();
+    public abstract function buildUrl();
     
     /**
      * Find the next commit to deploy based on the rules of [deploy] and [skipdeploy]
