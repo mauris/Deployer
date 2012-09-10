@@ -105,17 +105,25 @@ abstract class Deployer{
         
         $this->data = $data;
         if(is_array($options)){
-            foreach($this->options as $key => &$value){
-                if(array_key_exists($key, $options)){
-                    $value = $options[$key];
-                }
-            }
-            $this->log('{Deployer} started with options:');
-            $this->log(json_encode($this->options));
+            $this->options($options);
         }else{
-            $this->log('{Deployer} started with default options.');
+            $this->log('Deployer started with default options.');
         }
         
+    }
+    
+    /**
+     * Update the options in Deployer
+     * @param array $options
+     * @since 1.0
+     */
+    public function options($options){
+        foreach($this->options as $key => &$value){
+            if(array_key_exists($key, $options)){
+                $value = $options[$key];
+            }
+        }
+        $this->log('Options updated:' . json_encode($this->options));
     }
     
     /**
