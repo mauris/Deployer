@@ -34,7 +34,7 @@ class Bootstrap {
                         . DIRECTORY_SEPARATOR;
             }
             $fileName .= str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
-            require $fileName;
+            require_once($fileName);
         });
     }
     
