@@ -69,6 +69,11 @@ abstract class Deployer{
          */
         'branch' => 'master',
         
+        /**
+         * An array of IPs that is valid for the deployment operation
+         */
+        'ipFilter' => null,
+        
     );
     
     /**
@@ -229,6 +234,15 @@ abstract class Deployer{
             }
         }
         chmod($dir, $mode);
+    }
+    
+    protected function ipFilter(){
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        if($this->options['ipFilter'] 
+                && !in_array($ipAddress, $this->options['ipFilter'])){
+            throw new Exception('Client IP not in valid range.');
+        }
+        $this->log('IP Address ' . $ipAddress . ' filtered.');
     }
     
     /**
