@@ -46,3 +46,5 @@ class Bootstrap {
     }
     
 }
+
+Bootstrap::initialize();
