@@ -1,5 +1,8 @@
 {
 	"require":{
 		"symfony/process": "2.1.*"
-	}
+	},
+    "autoload": {
+        "psr-0": {"Deployer": "src/"}
+    }
 }
