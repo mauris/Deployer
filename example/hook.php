@@ -1,6 +1,5 @@
 <?php
 include('src/Deployer/Bootstrap.php');
-Deployer\Bootstrap::initialize();
 use Deployer\Drivers\Github\Deployer as Worker;
 
 if($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('payload', $_POST)){
