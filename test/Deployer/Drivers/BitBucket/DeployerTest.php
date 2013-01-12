@@ -28,9 +28,7 @@ class DeployerTest extends \PHPUnit_Framework_TestCase {
      */
     public function testValidateFail() {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
-        $object = new Deployer($source, array('logFile' => null));
-        $this->setExpectedException('ErrorException');
-        $object->validate();
+        $object = new Deployer(new Payload($source), array('logFile' => null));
     }
 
 }

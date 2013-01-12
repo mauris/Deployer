@@ -29,8 +29,7 @@ class DeployerTest extends \PHPUnit_Framework_TestCase {
      */
     public function testValidateSuccess() {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
-        $object = new Deployer($source, array('logFile' => null));
-        $object->validate();
+        $object = new Deployer(new Payload($source), array('logFile' => null));
         $this->assertEquals('https://github.com/defunkt/github.git', $object->buildUrl());
     }
 
