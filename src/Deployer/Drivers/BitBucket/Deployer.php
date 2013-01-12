@@ -9,8 +9,8 @@
  * All rights reserved.
  */
 
-namespace Deployer\Drivers;
-use Deployer\Deployer as Deployer;
+namespace Deployer\Drivers\BitBucket;
+use Deployer\Deployer as BaseDeployer;
 
 /**
  * A deployer from pulling data from BitBucket
@@ -18,10 +18,10 @@ use Deployer\Deployer as Deployer;
  * @author Sam-Mauris Yong / mauris@hotmail.sg
  * @copyright Copyright (c) Sam-Mauris Yong
  * @license http://www.opensource.org/licenses/bsd-license New BSD License
- * @package Deployer\Drivers
+ * @package Deployer\Drivers\BitBucket
  * @since 1.0.0
  */
-class BitBucket extends Deployer {
+class Deployer extends BaseDeployer {
     
     public function __construct($data, $options = null) {
         $this->options['ipFilter'] = array(
