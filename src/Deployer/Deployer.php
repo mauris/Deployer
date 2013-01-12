@@ -1,17 +1,24 @@
 <?php
 
+/**
+ * Deployer
+ * By Sam-Mauris Yong
+ * 
+ * Released open source under New BSD 3-Clause License.
+ * Copyright (c) Sam-Mauris Yong <sam@mauris.sg>
+ * All rights reserved.
+ */
+
 namespace Deployer;
 
-/**
- * Deployer class
- * 
+/** 
  * The deployer generic class that helps to pull Git repositories
  *
  * @author Sam-Mauris Yong / mauris@hotmail.sg
- * @copyright Copyright (c) 2012, Sam-Mauris Yong
+ * @copyright Copyright (c) Sam-Mauris Yong
  * @license http://www.opensource.org/licenses/bsd-license New BSD License
  * @package Deployer
- * @since 1.0
+ * @since 1.0.0
  */
 abstract class Deployer{
     
@@ -79,27 +86,27 @@ abstract class Deployer{
     /**
      * The username for HTTPS authentication
      * @var string
-     * @since 1.0
+     * @since 1.0.0
      */
     protected $username;
     
     /**
      * The username for HTTPS authentication
      * @var string
-     * @since 1.0
+     * @since 1.0.0
      */
     protected $password;
     
     /**
      * The data received from the hook call
      * @var array
-     * @since 1.0
+     * @since 1.0.0
      */
     protected $data;
     
     /**
      * Create a new Deployer object
-     * @since 1.0
+     * @since 1.0.0
      */
     public function __construct($data, $options = null){
         $obj = $this;
@@ -120,7 +127,7 @@ abstract class Deployer{
     /**
      * Update the options in Deployer
      * @param array $options
-     * @since 1.0
+     * @since 1.0.0
      */
     public function options($options){
         foreach($this->options as $key => &$value){
@@ -135,7 +142,7 @@ abstract class Deployer{
      * Enter the credentials for authentication
      * @param string $username The username
      * @param string $password The password
-     * @since 1.0
+     * @since 1.0.0
      */
     public function login($username, $password){
         $this->username = $username;
@@ -146,7 +153,7 @@ abstract class Deployer{
     
     /**
      * Performs the validation of the received information
-     * @since 1.0
+     * @since 1.0.0
      */
     public function validate(){
         
@@ -156,7 +163,7 @@ abstract class Deployer{
      * Log a validation error
      * @param string $message The error message
      * @throws \Exception
-     * @since 1.0
+     * @since 1.0.0
      */
     protected function validationError($message){
         $this->log($message, self::LOG_ERROR);
@@ -167,7 +174,7 @@ abstract class Deployer{
      * Write to the log file
      * @param string $message The message to the log file
      * @param string $type (optional) The log type
-     * @since 1.0
+     * @since 1.0.0
      */
     public function log($message, $type = self::LOG_INFO){
         $file = $this->options['logFile'];
@@ -187,7 +194,7 @@ abstract class Deployer{
     /**
      * Execute a shell command and perform logging
      * @param string $cmd The command to execute
-     * @since 1.0
+     * @since 1.0.0
      */
     public function execute($cmd){
         $this->log(sprintf('Executing command: %s', $cmd));
@@ -201,7 +208,7 @@ abstract class Deployer{
      * Recursively destroy a directory
      * @param string $dir The directory to destroy
      * @return boolean Tells if successful or not.
-     * @since 1.0
+     * @since 1.0.0
      */
     protected static function destroyDir($dir){
         if(!file_exists($dir)){
@@ -221,7 +228,7 @@ abstract class Deployer{
      * Recursively change the permissions of files and folders
      * @param string $dir The path to set new permissions
      * @param integer $mode The permissions to set
-     * @since 1.0
+     * @since 1.0.0
      */
     protected static function chmodR($dir, $mode){
         if(!file_exists($dir)){
@@ -236,6 +243,11 @@ abstract class Deployer{
         chmod($dir, $mode);
     }
     
+    /**
+     * Performs IP filtering check
+     * @throws Exception Thrown when requestor IP is not valid
+     * @since 1.0.0
+     */
     protected function ipFilter(){
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         if($this->options['ipFilter'] 
@@ -248,20 +260,20 @@ abstract class Deployer{
     /**
      * Build the URL to clone the git repository
      * @return string The URL returned
-     * @since 1.0
+     * @since 1.0.0
      */
     public abstract function buildUrl();
     
     /**
      * Find the next commit to deploy based on the rules of [deploy] and [skipdeploy]
      * @return string Returns the commit to clone
-     * @since 1.0
+     * @since 1.0.0
      */
     protected abstract function findCommit();
     
     /**
      * Perform the deployment operations
-     * @since 1.0
+     * @since 1.0.0
      */
     public function deploy(){
         $url = $this->buildUrl();
