@@ -51,8 +51,4 @@ abstract class Payload implements IPayload {
         throw new \Exception('Payload cannot be loaded from current HTTP request');
     }
     
-    public abstract function name();
-    
-    public abstract function commits();
-    
 }
