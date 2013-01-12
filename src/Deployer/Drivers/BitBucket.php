@@ -15,6 +15,13 @@ use Deployer\Deployer as Deployer;
  */
 class BitBucket extends Deployer {
     
+    public function __construct($data, $options = null) {
+        $this->options['ipFilter'] = array(
+            '63.246.22.222'
+        );
+        parent::__construct($data, $options);
+    }
+    
     public function validate(){
         $this->log('Validation started');
         if(!$this->data){

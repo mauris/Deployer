@@ -17,7 +17,8 @@ class Github extends Deployer {
     
     public function __construct($data, $options = null) {
         $this->options['ipFilter'] = array(
-            '207.97.227.253', '50.57.128.197', '108.171.174.178');
+            '207.97.227.253', '50.57.128.197', '108.171.174.178'
+        );
         parent::__construct($data, $options);
     }
     
