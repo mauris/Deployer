@@ -11,6 +11,8 @@
 
 namespace Deployer;
 
+use Deployer\Payload\Payload;
+
 /** 
  * The deployer generic class that helps to pull Git repositories
  *
@@ -98,24 +100,24 @@ abstract class Deployer{
     protected $password;
     
     /**
-     * The data received from the hook call
-     * @var array
-     * @since 1.0.0
+     * The payload
+     * @var \Deployer\Payload\Payload
+     * @since 1.0.1
      */
-    protected $data;
+    protected $payload;
     
     /**
      * Create a new Deployer object
      * @since 1.0.0
      */
-    public function __construct($data, $options = null){
+    public function __construct(Payload $payload, $options = null){
         $obj = $this;
         set_error_handler(function($errno, $errstr, $errfile = null, $errline = null, $errcontext = null )use($obj){
             $obj->log($errstr, Deployer::LOG_ERROR);
             throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
         });
         
-        $this->data = $data;
+        $this->payload = $payload;
         if(is_array($options)){
             $this->options($options);
         }else{
@@ -149,25 +151,6 @@ abstract class Deployer{
         $this->password = $password;
         $this->options['https'] = true;
         $this->log(sprintf('Signing in as "%s".', $username));
-    }
-    
-    /**
-     * Performs the validation of the received information
-     * @since 1.0.0
-     */
-    public function validate(){
-        
-    }
-    
-    /**
-     * Log a validation error
-     * @param string $message The error message
-     * @throws \Exception
-     * @since 1.0.0
-     */
-    protected function validationError($message){
-        $this->log($message, self::LOG_ERROR);
-        throw new \Exception($message);
     }
     
     /**
@@ -269,7 +252,29 @@ abstract class Deployer{
      * @return string Returns the commit to clone
      * @since 1.0.0
      */
-    protected abstract function findCommit();
+    protected function findCommit(){
+        $node = null;
+        $commits = array_reverse($this->payload->commits());
+        if($this->options['autoDeploy']){
+            foreach($commits as $commit){
+                /* @var $commit \Deployer\Payload\Commit */
+                if(strpos($commit->message(), self::HOOK_SKIP_KEY) === false){
+                    $node = $commit->commit();
+                    break;
+                }
+                $this->log('Skipping node "' . $commit->commit() . '".');
+            }
+        }else{
+            foreach($commits as $commit){
+                if(strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false){
+                    $node = $commit->commit();
+                    break;
+                }
+                $this->log('Skipping node "' . $commit->commit() . '".');
+            }
+        }
+        return $node;
+    }
     
     /**
      * Perform the deployment operations

@@ -10,6 +10,8 @@
  */
 
 namespace Deployer\Drivers\BitBucket;
+
+use Deployer\Payload\Payload;
 use Deployer\Deployer as BaseDeployer;
 
 /**
@@ -23,31 +25,11 @@ use Deployer\Deployer as BaseDeployer;
  */
 class Deployer extends BaseDeployer {
     
-    public function __construct($data, $options = null) {
+    public function __construct(Payload $payload, $options = null) {
         $this->options['ipFilter'] = array(
             '63.246.22.222'
         );
-        parent::__construct($data, $options);
-    }
-    
-    public function validate(){
-        $this->log('Validation started');
-        if(!$this->data){
-            $this->validationError('Data Error: No data available.');
-        }
-        if($this->data['canon_url'] != 'https://bitbucket.org'){
-            $this->validationError('Data Error: Canon URL is not BitBucket\'s');
-        }
-        if(!$this->data['commits']){
-            $this->validationError('Data Error: No commits in push hook.');
-        }
-        if(!$this->data['repository'] || !$this->data['repository']['absolute_url']){
-            $this->validationError('Data Error: Repository or absolute URL not set.');
-        }
-        if(!$this->data['repository']['owner'] || !$this->data['repository']['name'] || !$this->data['repository']['slug']){
-            $this->validationError('Data Error: Repository information incomplete; missing owner, name or slug.');
-        }
-        $this->log('Validation successful');
+        parent::__construct($payload, $options);
     }
     
     public function buildUrl(){
@@ -63,31 +45,8 @@ class Deployer extends BaseDeployer {
         }else{
             $url = 'http://';
         }
-        $url .= 'bitbucket.org/' . $this->data['repository']['owner'] . '/' . $this->data['repository']['slug'] . '.git';
+        $url .= 'bitbucket.org/' . $this->payload->name() . '.git';
         return $url;
-    }
-    
-    protected function findCommit(){
-        $node = null;
-        $commits = array_reverse($this->data['commits']);
-        if($this->options['autoDeploy']){
-            foreach($commits as $commit){
-                if(strpos($commit['message'], self::HOOK_SKIP_KEY) === false){
-                    $node = $commit['raw_node'];
-                    break;
-                }
-                $this->log('Skipping node "' . $commit['raw_node'] . '".');
-            }
-        }else{
-            foreach($commits as $commit){
-                if(strpos($commit['message'], self::HOOK_DEPLOY_KEY) !== false){
-                    $node = $commit['raw_node'];
-                    break;
-                }
-                $this->log('Skipping node "' . $commit['raw_node'] . '".');
-            }
-        }
-        return $node;
     }
     
 }
