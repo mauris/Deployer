@@ -241,7 +241,7 @@ abstract class Deployer{
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         if($this->options['ipFilter'] 
                 && !in_array($ipAddress, (array)$this->options['ipFilter'])){
-            throw new Exception('Client IP not in valid range.');
+            throw new \Exception('Client IP not in valid range.');
         }
         $this->log('IP Address ' . $ipAddress . ' filtered.');
     }
@@ -306,7 +306,7 @@ abstract class Deployer{
             chdir($path);
             try{
                 $this->execute('git rev-parse');
-            }catch(Exception $e){
+            }catch(\Exception $e){
                 $this->log('Repository not found. Cloning repository...');
                 $this->execute('git init');
                 $this->execute(sprintf('git remote add origin %s', $url));
