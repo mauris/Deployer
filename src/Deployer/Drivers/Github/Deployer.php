@@ -36,9 +36,9 @@ class Deployer extends BaseDeployer {
         if($this->options['https']){
             $url = 'https://';
             if($this->username){
-                $url .= $this->username;
+                $url .= urlencode($this->username);
                 if($this->password){
-                    $url .= ':' . $this->password;
+                    $url .= ':' . urlencode($this->password);
                 }
                 $url .= '@';
             }
