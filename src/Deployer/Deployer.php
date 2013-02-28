@@ -299,19 +299,21 @@ abstract class Deployer{
             ignore_user_abort(true);
             set_time_limit(0);
             
-            $this->log('Preparing target directory...');
-            if(is_dir($path)){
-                $this->log(sprintf('Fetching changes...', $path));
-                chdir($path);
-                $this->execute('git fetch');
-            }else{
+            $this->log('Checking target directory...');
+            if(!is_dir($path)){
                 mkdir($path);
-                chdir($path);
-                $this->log('Cloning repository...');
+            }
+            chdir($path);
+            try{
+                $this->execute('git rev-parse');
+            }catch(Exception $e){
+                $this->log('Repository not found. Cloning repository...');
                 $this->execute('git init');
                 $this->execute(sprintf('git remote add origin %s', $url));
                 $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             }
+            $this->log(sprintf('Fetching changes...', $path));
+            $this->execute('git fetch');
             $this->execute(sprintf('git checkout %s', $node));
             
             chdir($currentDir);
