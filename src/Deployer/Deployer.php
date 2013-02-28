@@ -12,6 +12,7 @@
 namespace Deployer;
 
 use Deployer\Payload\Payload;
+use Symfony\Component\Process\Process;
 
 /** 
  * The deployer generic class that helps to pull Git repositories
@@ -181,7 +182,12 @@ abstract class Deployer{
      */
     public function execute($cmd){
         $this->log(sprintf('Executing command: %s', $cmd));
-        $output = shell_exec($cmd);
+        $process = new Process($cmd);
+        if ($process->run() == 0) {
+            $output = $process->getOutput();
+        }else{
+            throw new \RuntimeException('Failed to run command "'.$cmd.'".');
+        }
         if($output){
             $this->log(sprintf("Output:\n%s", $output));
         }
@@ -286,49 +292,29 @@ abstract class Deployer{
         
         if($url && $node){
             $this->log(sprintf('Commit "%s" will be checked out.', $node));
-            $target = $this->options['target'];
+            $path = realpath($this->options['target']);
             
-            $this->log('Creating temporary directory...');
-            if(is_dir('temp')){
-                $this->log('Temp directory already exist. '
-                        . 'Removing temp directory first...');
-                self::chmodR('temp', 0777);
-                self::destroyDir('temp');
-            }
-            mkdir('temp');
+            $currentDir = getcwd();
             
             ignore_user_abort(true);
             set_time_limit(0);
-            $this->log('Fetching from Git repository');
-            $this->execute('cd temp && git init');
-            $this->execute(sprintf('cd temp && git remote add origin %s', $url));
-            $this->execute(sprintf(
-                    'cd temp && git pull origin %s', $this->options['branch']
-                ));
-            $this->execute(sprintf('cd temp && git checkout %s', $node));
-            $this->execute('cd temp && git reset --hard HEAD');
             
             $this->log('Preparing target directory...');
-            if(!is_dir($target)){
-                $this->log('Target directory does not exist. '
-                        . 'Creating target directory first...');
-                mkdir($target);
+            if(is_dir($path)){
+                $this->log(sprintf('Fetching changes...', $path));
+                chdir($path);
+                $this->execute('git fetch');
+            }else{
+                mkdir($path);
+                chdir($path);
+                $this->log('Cloning repository...');
+                $this->execute('git init');
+                $this->execute(sprintf('git remote add origin %s', $url));
+                $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             }
-            $path = realpath($this->options['target']);
-            if($path == ''){
-                $path = __DIR__;
-            }
-            $path .= DIRECTORY_SEPARATOR;
-            $this->log(sprintf('Deploying to %s...', $path));
+            $this->execute(sprintf('git checkout %s', $node));
             
-            $this->execute(sprintf(
-                    'cd temp && git checkout-index -af --prefix=%s',
-                    $path
-                ));
-            
-            $this->log('Removing temp directory...');
-            self::chmodR('temp', 0777);
-            self::destroyDir('temp');
+            chdir($currentDir);
         }else{
             $this->log('No node found to deploy.');
         }
