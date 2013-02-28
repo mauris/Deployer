@@ -28,4 +28,6 @@ interface IPayload {
     
     public function commits();
     
+    public function load($config = array());
+    
 }

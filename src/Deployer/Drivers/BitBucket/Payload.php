@@ -37,5 +37,9 @@ class Payload extends BasePayload {
     public function name() {
         return $this->payload['repository']['owner'] . '/' . $this->payload['repository']['slug'];
     }
+    
+    public function load($config = array()){
+        return new Deployer($this, $config);
+    }
 
 }
