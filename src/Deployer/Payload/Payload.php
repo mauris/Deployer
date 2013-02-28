@@ -46,7 +46,7 @@ abstract class Payload implements IPayload, IBuilder {
      */
     public static function fromCurrent(){
         if(isset($_POST['payload']) && $_POST['payload']){
-            $payload = new self(json_decode($_POST['payload'], true));
+            $payload = new static(json_decode($_POST['payload'], true));
             return $payload;
         }
         throw new \Exception('Payload cannot be loaded from current HTTP request');
