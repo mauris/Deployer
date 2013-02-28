@@ -10,7 +10,6 @@
 		},
 		{
 			"processor": [
-				"\\Packfire\\Concrete\\Processor\\GitTagVersion",
 				"\\Packfire\\Concrete\\Processor\\StripWhiteSpace"
 			],
 			"build":[
