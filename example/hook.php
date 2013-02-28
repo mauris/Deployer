@@ -1,7 +1,7 @@
 <?php
 include('src/Deployer/Bootstrap.php');
-use Deployer\Payload\Factory;
+use Deployer\Drivers\Github\Payload;
 
-$deployer = Factory::fromCurrent()->load(array('target' => '../'));
+$deployer = Payload::fromCurrent()->load(array('target' => '../'));
 $deployer->login('username', 'password'); // normally only needed when repository is private
 $deployer->deploy();
