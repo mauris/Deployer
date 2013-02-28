@@ -11,7 +11,7 @@
 
 namespace Deployer\Drivers\BitBucket;
 
-use Deployer\Payload\Payload;
+use Deployer\Payload\Payload as BasePayload;
 use Deployer\Deployer as BaseDeployer;
 
 /**
@@ -25,7 +25,7 @@ use Deployer\Deployer as BaseDeployer;
  */
 class Deployer extends BaseDeployer {
     
-    public function __construct(Payload $payload, $options = null) {
+    public function __construct(BasePayload $payload, $options = null) {
         $this->options['ipFilter'] = array(
             '63.246.22.222'
         );
