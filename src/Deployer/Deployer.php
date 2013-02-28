@@ -1,17 +1,27 @@
 <?php
 
+/**
+ * Deployer
+ * By Sam-Mauris Yong
+ * 
+ * Released open source under New BSD 3-Clause License.
+ * Copyright (c) Sam-Mauris Yong <sam@mauris.sg>
+ * All rights reserved.
+ */
+
 namespace Deployer;
 
-/**
- * Deployer class
- * 
+use Deployer\Payload\Payload;
+use Symfony\Component\Process\Process;
+
+/** 
  * The deployer generic class that helps to pull Git repositories
  *
  * @author Sam-Mauris Yong / mauris@hotmail.sg
- * @copyright Copyright (c) 2012, Sam-Mauris Yong
+ * @copyright Copyright (c) Sam-Mauris Yong
  * @license http://www.opensource.org/licenses/bsd-license New BSD License
  * @package Deployer
- * @since 1.0
+ * @since 1.0.0
  */
 abstract class Deployer{
     
@@ -79,36 +89,36 @@ abstract class Deployer{
     /**
      * The username for HTTPS authentication
      * @var string
-     * @since 1.0
+     * @since 1.0.0
      */
     protected $username;
     
     /**
      * The username for HTTPS authentication
      * @var string
-     * @since 1.0
+     * @since 1.0.0
      */
     protected $password;
     
     /**
-     * The data received from the hook call
-     * @var array
-     * @since 1.0
+     * The payload
+     * @var \Deployer\Payload\Payload
+     * @since 1.0.1
      */
-    protected $data;
+    protected $payload;
     
     /**
      * Create a new Deployer object
-     * @since 1.0
+     * @since 1.0.0
      */
-    public function __construct($data, $options = null){
+    public function __construct(Payload $payload, $options = null){
         $obj = $this;
         set_error_handler(function($errno, $errstr, $errfile = null, $errline = null, $errcontext = null )use($obj){
             $obj->log($errstr, Deployer::LOG_ERROR);
             throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
         });
         
-        $this->data = $data;
+        $this->payload = $payload;
         if(is_array($options)){
             $this->options($options);
         }else{
@@ -120,7 +130,7 @@ abstract class Deployer{
     /**
      * Update the options in Deployer
      * @param array $options
-     * @since 1.0
+     * @since 1.0.0
      */
     public function options($options){
         foreach($this->options as $key => &$value){
@@ -135,7 +145,7 @@ abstract class Deployer{
      * Enter the credentials for authentication
      * @param string $username The username
      * @param string $password The password
-     * @since 1.0
+     * @since 1.0.0
      */
     public function login($username, $password){
         $this->username = $username;
@@ -145,29 +155,10 @@ abstract class Deployer{
     }
     
     /**
-     * Performs the validation of the received information
-     * @since 1.0
-     */
-    public function validate(){
-        
-    }
-    
-    /**
-     * Log a validation error
-     * @param string $message The error message
-     * @throws \Exception
-     * @since 1.0
-     */
-    protected function validationError($message){
-        $this->log($message, self::LOG_ERROR);
-        throw new \Exception($message);
-    }
-    
-    /**
      * Write to the log file
      * @param string $message The message to the log file
      * @param string $type (optional) The log type
-     * @since 1.0
+     * @since 1.0.0
      */
     public function log($message, $type = self::LOG_INFO){
         $file = $this->options['logFile'];
@@ -187,11 +178,16 @@ abstract class Deployer{
     /**
      * Execute a shell command and perform logging
      * @param string $cmd The command to execute
-     * @since 1.0
+     * @since 1.0.0
      */
     public function execute($cmd){
         $this->log(sprintf('Executing command: %s', $cmd));
-        $output = shell_exec($cmd);
+        $process = new Process($cmd);
+        if ($process->run() == 0) {
+            $output = $process->getOutput();
+        }else{
+            throw new \RuntimeException('Failed to run command "'.$cmd.'".');
+        }
         if($output){
             $this->log(sprintf("Output:\n%s", $output));
         }
@@ -201,7 +197,7 @@ abstract class Deployer{
      * Recursively destroy a directory
      * @param string $dir The directory to destroy
      * @return boolean Tells if successful or not.
-     * @since 1.0
+     * @since 1.0.0
      */
     protected static function destroyDir($dir){
         if(!file_exists($dir)){
@@ -221,7 +217,7 @@ abstract class Deployer{
      * Recursively change the permissions of files and folders
      * @param string $dir The path to set new permissions
      * @param integer $mode The permissions to set
-     * @since 1.0
+     * @since 1.0.0
      */
     protected static function chmodR($dir, $mode){
         if(!file_exists($dir)){
@@ -236,11 +232,16 @@ abstract class Deployer{
         chmod($dir, $mode);
     }
     
+    /**
+     * Performs IP filtering check
+     * @throws Exception Thrown when requestor IP is not valid
+     * @since 1.0.0
+     */
     protected function ipFilter(){
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         if($this->options['ipFilter'] 
-                && !in_array($ipAddress, $this->options['ipFilter'])){
-            throw new Exception('Client IP not in valid range.');
+                && !in_array($ipAddress, (array)$this->options['ipFilter'])){
+            throw new \Exception('Client IP not in valid range.');
         }
         $this->log('IP Address ' . $ipAddress . ' filtered.');
     }
@@ -248,20 +249,42 @@ abstract class Deployer{
     /**
      * Build the URL to clone the git repository
      * @return string The URL returned
-     * @since 1.0
+     * @since 1.0.0
      */
     public abstract function buildUrl();
     
     /**
      * Find the next commit to deploy based on the rules of [deploy] and [skipdeploy]
      * @return string Returns the commit to clone
-     * @since 1.0
+     * @since 1.0.0
      */
-    protected abstract function findCommit();
+    protected function findCommit(){
+        $node = null;
+        $commits = array_reverse($this->payload->commits());
+        if($this->options['autoDeploy']){
+            foreach($commits as $commit){
+                /* @var $commit \Deployer\Payload\Commit */
+                if(strpos($commit->message(), self::HOOK_SKIP_KEY) === false){
+                    $node = $commit->commit();
+                    break;
+                }
+                $this->log('Skipping node "' . $commit->commit() . '".');
+            }
+        }else{
+            foreach($commits as $commit){
+                if(strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false){
+                    $node = $commit->commit();
+                    break;
+                }
+                $this->log('Skipping node "' . $commit->commit() . '".');
+            }
+        }
+        return $node;
+    }
     
     /**
      * Perform the deployment operations
-     * @since 1.0
+     * @since 1.0.0
      */
     public function deploy(){
         $url = $this->buildUrl();
@@ -269,49 +292,31 @@ abstract class Deployer{
         
         if($url && $node){
             $this->log(sprintf('Commit "%s" will be checked out.', $node));
-            $target = $this->options['target'];
+            $path = realpath($this->options['target']);
             
-            $this->log('Creating temporary directory...');
-            if(is_dir('temp')){
-                $this->log('Temp directory already exist. '
-                        . 'Removing temp directory first...');
-                self::chmodR('temp', 0777);
-                self::destroyDir('temp');
-            }
-            mkdir('temp');
+            $currentDir = getcwd();
             
             ignore_user_abort(true);
             set_time_limit(0);
-            $this->log('Fetching from Git repository');
-            $this->execute('cd temp && git init');
-            $this->execute(sprintf('cd temp && git remote add origin %s', $url));
-            $this->execute(sprintf(
-                    'cd temp && git pull origin %s', $this->options['branch']
-                ));
-            $this->execute(sprintf('cd temp && git checkout %s', $node));
-            $this->execute('cd temp && git reset --hard HEAD');
             
-            $this->log('Preparing target directory...');
-            if(!is_dir($target)){
-                $this->log('Target directory does not exist. '
-                        . 'Creating target directory first...');
-                mkdir($target);
+            $this->log('Checking target directory...');
+            if(!is_dir($path)){
+                mkdir($path);
             }
-            $path = realpath($this->options['target']);
-            if($path == ''){
-                $path = __DIR__;
+            chdir($path);
+            try{
+                $this->execute('git rev-parse');
+            }catch(\Exception $e){
+                $this->log('Repository not found. Cloning repository...');
+                $this->execute('git init');
+                $this->execute(sprintf('git remote add origin %s', $url));
+                $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             }
-            $path .= DIRECTORY_SEPARATOR;
-            $this->log(sprintf('Deploying to %s...', $path));
+            $this->log(sprintf('Fetching changes...', $path));
+            $this->execute('git fetch');
+            $this->execute(sprintf('git checkout %s', $node));
             
-            $this->execute(sprintf(
-                    'cd temp && git checkout-index -af --prefix=%s',
-                    $path
-                ));
-            
-            $this->log('Removing temp directory...');
-            self::chmodR('temp', 0777);
-            self::destroyDir('temp');
+            chdir($currentDir);
         }else{
             $this->log('No node found to deploy.');
         }

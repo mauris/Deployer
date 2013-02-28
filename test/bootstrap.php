@@ -1,4 +1,2 @@
 <?php
-
-include('src/Deployer/Bootstrap.php');
-Deployer\Bootstrap::initialize();
+require(__DIR__ . '/../src/Deployer/Bootstrap.php');
