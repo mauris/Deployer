@@ -20,7 +20,7 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-abstract class Payload implements IPayload {
+abstract class Payload implements IPayload, IBuilder {
     
     /**
      * The payload data
@@ -39,9 +39,10 @@ abstract class Payload implements IPayload {
     }
     
     /**
-     * Load the 
-     * @return \Deployer\Payload\Payload
+     * Load the payload from the input
+     * @return \Deployer\Payload\Payload Returns the payload created
      * @throws \Exception
+     * @since 1.0.0
      */
     public static function fromCurrent(){
         if(isset($_POST['payload']) && $_POST['payload']){
