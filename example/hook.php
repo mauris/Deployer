@@ -1,5 +1,5 @@
 <?php
-include('src/Deployer/Bootstrap.php');
+require('deployer.phar');
 use Deployer\Drivers\Github\Payload;
 
 $deployer = Payload::fromCurrent()->load(array('target' => '../'));
