@@ -1,14 +1,7 @@
 <?php
-include('src/Deployer/Bootstrap.php');
-Deployer\Bootstrap::initialize();
-use Deployer\Drivers\Github as Worker;
+require('deployer.phar');
+use Deployer\Drivers\Github\Payload;
 
-if($_SERVER['REQUEST_METHOD'] == 'POST' && array_key_exists('payload', $_POST)){
-    $source = json_decode($_POST['payload'], true);
-    $deployer = new Worker($source, array('target' => '../'));
-    $deployer->login('username', 'password'); // normally only needed when repository is private
-    $deployer->validate();
-    $deployer->deploy();
-
-    // write any code here to build the cloned files
-}
+$deployer = Payload::fromCurrent()->load(array('target' => '../'));
+$deployer->login('username', 'password'); // normally only needed when repository is private
+$deployer->deploy();

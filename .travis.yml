@@ -3,4 +3,8 @@ php:
   - 5.3
   - 5.3.3
   - 5.4
-script: phpunit -c phpunit.xml
+before_script:
+  - composer install
+script: phpunit -c phpunit.xml.dist
+after_script:
+  - "wget --quiet http://mauris.sg/bin/pdc.phar && php pdc.phar src"
