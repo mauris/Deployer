@@ -234,7 +234,7 @@ abstract class Deployer{
     protected function ipFilter(){
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         if($this->options['ipFilter'] 
-                && !in_array($ipAddress, $this->options['ipFilter'])){
+                && !in_array($ipAddress, (array)$this->options['ipFilter'])){
             throw new Exception('Client IP not in valid range.');
         }
         $this->log('IP Address ' . $ipAddress . ' filtered.');
