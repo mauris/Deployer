@@ -11,7 +11,7 @@
 
 namespace Deployer\Drivers\Github;
 
-use Deployer\Payload\Payload;
+use Deployer\Payload\Payload as BasePayload;
 use Deployer\Deployer as BaseDeployer;
 
 /**
@@ -25,7 +25,7 @@ use Deployer\Deployer as BaseDeployer;
  */
 class Deployer extends BaseDeployer {
     
-    public function __construct(Payload $payload, $options = null) {
+    public function __construct(BasePayload $payload, $options = null) {
         $this->options['ipFilter'] = array(
             '207.97.227.253', '50.57.128.197', '108.171.174.178'
         );
@@ -36,9 +36,9 @@ class Deployer extends BaseDeployer {
         if($this->options['https']){
             $url = 'https://';
             if($this->username){
-                $url .= $this->username;
+                $url .= urlencode($this->username);
                 if($this->password){
-                    $url .= ':' . $this->password;
+                    $url .= ':' . urlencode($this->password);
                 }
                 $url .= '@';
             }
