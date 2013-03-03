@@ -186,7 +186,7 @@ abstract class Deployer{
         if ($process->run() == 0) {
             $output = $process->getOutput();
         }else{
-            throw new \RuntimeException('Failed to run command "'.$cmd.'".');
+            throw new \RuntimeException('Failed to run command "'.$cmd.'". Output: ' . $process->getOutput());
         }
         if($output){
             $this->log(sprintf("Output:\n%s", $output));
@@ -309,11 +309,10 @@ abstract class Deployer{
             }catch(\Exception $e){
                 $this->log('Repository not found. Cloning repository...');
                 $this->execute('git init');
-                $this->execute(sprintf('git remote add origin %s', $url));
-                $this->execute(sprintf('git pull origin %s', $this->options['branch']));
+                $this->execute(sprintf('git remote add origin "%s"', $url));
             }
             $this->log(sprintf('Fetching changes...', $path));
-            $this->execute('git fetch');
+            $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             $this->execute(sprintf('git checkout %s', $node));
             
             chdir($currentDir);
