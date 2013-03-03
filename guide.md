@@ -21,18 +21,12 @@ Deployer supports web service hook calls from the following git hosting service 
 
 ##Installation
 
- 1. Download Deployer by clicking the [Github download](https://github.com/thephpdeveloper/Deployer/downloads).
- 2. Extract the contents of the `src` folder in the zip file to a new `hook` folder on your web server root. *So assuming that your web server root is at `"/home/user/public_html/"`, you should extract the contents of the `src` folder to `"/home/user/public_html/hook/"`.*
- 3. Copy the file `example/hook.php` to your `hook` folder.  *Your hook call URL will then, for example, be at `http://example.com/hook/hook.php`.*
- 4. Open `hook.php` and modify:
-   - `use Deployer\Drivers\Github as Worker;` - replace `Github` with the driver class you wish to use.
-   - `$deployer = new Worker($source, array('target' => '../'));` - write any additional options in the 2nd parameters.
- 5. If needed, write additional code / script to build your application after the `"// write any code here to build the cloned files"` comment.
- 6. Configure your repository by going to the settings on the Git hosting page and adding your hook call URL.
+ 1. Download the [Deployer](http://mauris.sg/bin/deployer.phar) PHAR file.
+ 2. Create your Hook Script (see at `example/hook.php` in repository)
+ 3. Upload both the `deployer.phar` and `hook.php` to your server. 
+ 4. Configure your repository by going to the settings on the Git hosting page and adding your hook call URL.
    - for example on Github, go to `Admin` tab on the repository page, select `Service Hooks` and click `WebHooks URLs` and add in your URL there.
- 7. And you're done configuring - start pushing commits and see it deploying automatically!
-
-##Note
+ 5. And you're done configuring - start pushing commits and see it deploying automatically!
 
 ###Deployment Target
 
@@ -52,6 +46,3 @@ It is possible to skip deployment on certain commits or only deploy certain comm
  - If `autoDeploy` is set to **`false`**, only commits with the `[deploy]` written in the commit message will be deployed.
 
 The keywords `[skipdeploy]` and `[deploy]` can be configured through the *constants* in the `Deployer` class.
-
-###Git Cloning
-Whenever a hook call is received, Deployer clones the repository to a temporary directory, then performs a `checkout-index` to copy the files to your target directory. The files are overwritten and the temporary directory is removed. This may cause old file deposits i.e. files which were deleted from or moved elsewhere in the repository to stay.
