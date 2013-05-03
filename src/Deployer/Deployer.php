@@ -125,7 +125,7 @@ abstract class Deployer{
             $this->log('Deployer started with default options.');
         }
         
-        if(!preg_match('{^(?:\/|\\|\w\:\\).*$}', $this->options['logFile'])){
+        if(!preg_match('/^(?:\/|\\|[a-z]\:\\).*$/i', $this->options['logFile'])){
            $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
         }
     }
