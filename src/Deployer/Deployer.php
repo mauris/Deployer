@@ -129,6 +129,12 @@ abstract class Deployer{
             if(!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])){
                $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
             }
+            
+            $info = pathinfo($this->options['logFile']);
+            $this->options['lastLogFile'] = $info['dirname'] . '/' . $info['filename'] . '.last.' . $info['extension'];
+            if(file_exists($this->options['lastLogFile'])){
+                @unlink($this->options['lastLogFile']);
+            }
         }
     }
     
@@ -166,17 +172,24 @@ abstract class Deployer{
      * @since 1.0.0
      */
     public function log($message, $type = self::LOG_INFO){
-        $file = $this->options['logFile'];
-        if($file){
-            $fp = fopen($file, 'a');
-            fwrite($fp, sprintf(
-                    "%s [%s]: %s\n",
-                    date($this->options['dateFormat']),
-                    $type,
-                    $message
-                ));
+        $log = $this->options['logFile'];
+        if($log){
+            $msg = sprintf(
+                "%s [%s]: %s\n",
+                date($this->options['dateFormat']),
+                $type,
+                $message
+            );
+            $fp = fopen($log, 'a');
+            fwrite($fp, $msg);
             fclose($fp);
-            chmod($file, 0666);
+            chmod($log, 0666);
+            
+            $lastLog = $this->options['lastLogFile'];
+            $llfp = fopen($lastLog, 'a');
+            fwrite($llfp, $msg);
+            fclose($llfp);
+            chmod($lastLog, 0666);
         }
     }
 
