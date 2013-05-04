@@ -75,6 +75,11 @@ abstract class Deployer{
         'logFile' => 'deploy.log',
         
         /**
+         * Set whether last deployment log file is generated
+         */
+        'lastLogFile' => true,
+        
+        /**
          * The default branch to fetch
          */
         'branch' => 'master',
@@ -130,10 +135,12 @@ abstract class Deployer{
                $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
             }
             
-            $info = pathinfo($this->options['logFile']);
-            $this->options['lastLogFile'] = $info['dirname'] . '/' . $info['filename'] . '.last.' . $info['extension'];
-            if(file_exists($this->options['lastLogFile'])){
-                @unlink($this->options['lastLogFile']);
+            if($this->options['lastLogFile']){
+                $info = pathinfo($this->options['logFile']);
+                $this->options['lastLogFile'] = $info['dirname'] . '/' . $info['filename'] . '.last.' . $info['extension'];
+                if(file_exists($this->options['lastLogFile'])){
+                    @unlink($this->options['lastLogFile']);
+                }
             }
         }
     }
@@ -185,11 +192,13 @@ abstract class Deployer{
             fclose($fp);
             chmod($log, 0666);
             
-            $lastLog = $this->options['lastLogFile'];
-            $llfp = fopen($lastLog, 'a');
-            fwrite($llfp, $msg);
-            fclose($llfp);
-            chmod($lastLog, 0666);
+            if($this->options['lastLogFile']){
+                $lastLog = $this->options['lastLogFile'];
+                $llfp = fopen($lastLog, 'a');
+                fwrite($llfp, $msg);
+                fclose($llfp);
+                chmod($lastLog, 0666);
+            }
         }
     }
 
