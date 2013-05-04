@@ -23,14 +23,19 @@ Deployer supports web service hook calls from the following git hosting service 
 
 You can clone Deployer's repository and compile Deployer into PHAR easily by following the steps below:
 
-Clone Deployer's repository
+Clone Deployer's repository:
    > $ git clone https://github.com/thephpdeveloper/Deployer.git  
    > $ cd Deployer
 
-Download [Packfire Concrete](https://github.com/packfire/concrete) into the Deployer folder
+Install dependencies with [Composer](http://getcomposer.org):
+
+   > $ curl -sS https://getcomposer.org/installer | php  
+   > $ php composer.phar install
+
+Download [Packfire Concrete](https://github.com/packfire/concrete) into the Deployer folder:
    > $ wget -q http://mauris.sg/bin/concrete.phar
 
-Run Packfire Concrete
+Run Packfire Concrete:
 
    > $ php concrete.phar
 
