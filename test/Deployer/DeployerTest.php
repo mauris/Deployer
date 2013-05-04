@@ -43,7 +43,6 @@ class DeployerTest extends \PHPUnit_Framework_TestCase {
         $options = $property->getValue($this->object);
         $this->assertCount(8, $options);
         $this->assertEquals(false, $options['logFile']);
-        $this->assertEquals(true, $options['lastLogFile']);
         $this->assertEquals('test', $options['branch']);
     }
 
