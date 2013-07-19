@@ -288,7 +288,7 @@ abstract class Deployer
         
         if ($url && $node) {
             $this->logger->info(sprintf('Commit "%s" will be checked out.', $node));
-            $path = realpath($this->options['target']);
+            $path = $this->options['target'];
             
             $currentDir = getcwd();
             
