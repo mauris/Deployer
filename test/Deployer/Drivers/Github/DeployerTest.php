@@ -7,9 +7,6 @@ namespace Deployer\Drivers\Github;
  */
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers Deployer\Drivers\Github::validate
-     */
     public function testValidateSuccess()
     {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);

@@ -7,9 +7,6 @@ namespace Deployer\Drivers\BitBucket;
  */
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @covers Deployer\Drivers\BitBucket::validate
-     */
     public function testValidateFail()
     {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
