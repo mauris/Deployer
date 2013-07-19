@@ -13,6 +13,7 @@ namespace Deployer;
 
 use Deployer\Payload\Payload;
 use Symfony\Component\Process\Process;
+use Packfire\Logger\File as Logger;
 
 /** 
  * The deployer generic class that helps to pull Git repositories
@@ -35,14 +36,6 @@ abstract class Deployer
      * The keyword for skipping this commit
      */
     const HOOK_SKIP_KEY = '[skipdeploy]';
-    
-    const LOG_INFO = 'info';
-    
-    const LOG_WARNING = 'warn';
-    
-    const LOG_ERROR = 'error';
-    
-    const LOG_DEBUG = 'debug';
     
     protected $options = array(
         
@@ -107,6 +100,13 @@ abstract class Deployer
      * @since 1.0.1
      */
     protected $payload;
+
+    /**
+     * The logger that writes
+     * @var \Psr\Log\LoggerInterface
+     * @since 1.1.3
+     */
+    protected $logger;
     
     /**
      * Create a new Deployer object
@@ -114,24 +114,24 @@ abstract class Deployer
      */
     public function __construct(Payload $payload, $options = null)
     {
-        $obj = $this;
-        set_error_handler(
-            function ($errno, $errstr, $errfile = null, $errline = null, $errcontext = null) use ($obj) {
-                $obj->log($errstr, Deployer::LOG_ERROR);
-                throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
-            }
-        );
-        
-        $this->payload = $payload;
+        set_error_handler(array($this, 'errorHandler'));
+
         if (is_array($options)) {
             $this->options($options);
-        } else {
-            $this->log('Deployer started with default options.');
         }
         
+        // if it is not an absolute path then we use the current working directory
         if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
-            $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
+            $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
         }
+
+        $this->logger = new Logger($this->options['logFile']);
+        $this->payload = $payload;
+    }
+
+    public function errorHandler($errno, $errstr, $errfile = null, $errline = null, $errcontext = null)
+    {
+        throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
     }
     
     /**
@@ -146,7 +146,6 @@ abstract class Deployer
                 $value = $options[$key];
             }
         }
-        $this->log('Options updated:' . json_encode($this->options));
     }
     
     /**
@@ -160,32 +159,7 @@ abstract class Deployer
         $this->username = $username;
         $this->password = $password;
         $this->options['https'] = true;
-        $this->log(sprintf('Signing in as "%s".', $username));
-    }
-    
-    /**
-     * Write to the log file
-     * @param string $message The message to the log file
-     * @param string $type (optional) The log type
-     * @since 1.0.0
-     */
-    public function log($message, $type = self::LOG_INFO)
-    {
-        $file = $this->options['logFile'];
-        if ($file) {
-            $fp = fopen($file, 'a');
-            fwrite(
-                $fp,
-                sprintf(
-                    "%s [%s]: %s\n",
-                    date($this->options['dateFormat']),
-                    $type,
-                    $message
-                )
-            );
-            fclose($fp);
-            chmod($file, 0666);
-        }
+        $this->logger->info(sprintf('Signing in as "%s".', $username));
     }
 
     /**
@@ -195,7 +169,7 @@ abstract class Deployer
      */
     public function execute($cmd)
     {
-        $this->log(sprintf('Executing command: %s', $cmd));
+        $this->logger->info(sprintf('Executing command: %s', $cmd));
         $process = new Process($cmd);
         if ($process->run() == 0) {
             $output = $process->getOutput();
@@ -203,7 +177,7 @@ abstract class Deployer
             throw new \RuntimeException('Failed to run command "' . $cmd . '". Output: ' . $process->getOutput());
         }
         if ($output) {
-            $this->log(sprintf("Output:\n%s", $output));
+            $this->logger->info(sprintf("Output:\n%s", $output));
         }
     }
     
@@ -263,7 +237,7 @@ abstract class Deployer
         if ($this->options['ipFilter'] && !in_array($ipAddress, (array)$this->options['ipFilter'])) {
             throw new \Exception('Client IP not in valid range.');
         }
-        $this->log('IP Address ' . $ipAddress . ' filtered.');
+        $this->logger->info('IP Address ' . $ipAddress . ' filtered.');
     }
     
     /**
@@ -289,7 +263,7 @@ abstract class Deployer
                     $node = $commit->commit();
                     break;
                 }
-                $this->log('Skipping node "' . $commit->commit() . '".');
+                $this->logger->info('Skipping node "' . $commit->commit() . '".');
             }
         } else {
             foreach ($commits as $commit) {
@@ -297,7 +271,7 @@ abstract class Deployer
                     $node = $commit->commit();
                     break;
                 }
-                $this->log('Skipping node "' . $commit->commit() . '".');
+                $this->logger->info('Skipping node "' . $commit->commit() . '".');
             }
         }
         return $node;
@@ -313,7 +287,7 @@ abstract class Deployer
         $node = $this->findCommit();
         
         if ($url && $node) {
-            $this->log(sprintf('Commit "%s" will be checked out.', $node));
+            $this->logger->info(sprintf('Commit "%s" will be checked out.', $node));
             $path = realpath($this->options['target']);
             
             $currentDir = getcwd();
@@ -321,26 +295,26 @@ abstract class Deployer
             ignore_user_abort(true);
             set_time_limit(0);
             
-            $this->log('Checking target directory...');
             if (!is_dir($path)) {
+                $this->logger->info('Target directory not found, creating directory at ' . $path);
                 mkdir($path);
             }
             chdir($path);
             try {
                 $this->execute('git rev-parse');
             } catch (\Exception $e) {
-                $this->log('Repository not found. Cloning repository...');
+                $this->logger->info('Repository not found. Cloning repository.');
                 $this->execute('git init');
                 $this->execute(sprintf('git remote add origin "%s"', $url));
             }
-            $this->log(sprintf('Fetching changes...', $path));
+            $this->logger->info(sprintf('Checking out repository at %s', $node));
             $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             $this->execute(sprintf('git checkout %s', $node));
             
             chdir($currentDir);
         } else {
-            $this->log('No node found to deploy.');
+            $this->logger->info('No node found to deploy.');
         }
-        $this->log('Deploy completed.');
+        $this->logger->info('Deploy completed.');
     }
 }
