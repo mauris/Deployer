@@ -28,7 +28,8 @@ class Deployer extends BaseDeployer
     public function __construct(BasePayload $payload, $options = null)
     {
         $this->options['ipFilter'] = array(
-            '63.246.22.222'
+            '207.223.240.187',
+            '207.223.240.188'
         );
         parent::__construct($payload, $options);
     }
