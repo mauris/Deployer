@@ -23,30 +23,31 @@ use Deployer\Deployer as BaseDeployer;
  * @package Deployer\Drivers\BitBucket
  * @since 1.0.0
  */
-class Deployer extends BaseDeployer {
-    
-    public function __construct(BasePayload $payload, $options = null) {
+class Deployer extends BaseDeployer
+{
+    public function __construct(BasePayload $payload, $options = null)
+    {
         $this->options['ipFilter'] = array(
             '63.246.22.222'
         );
         parent::__construct($payload, $options);
     }
     
-    public function buildUrl(){
-        if($this->options['https']){
+    public function buildUrl()
+    {
+        if ($this->options['https']) {
             $url = 'https://';
-            if($this->username){
+            if ($this->username) {
                 $url .= urlencode($this->username);
-                if($this->password){
+                if ($this->password) {
                     $url .= ':' . urlencode($this->password);
                 }
                 $url .= '@';
             }
-        }else{
+        } else {
             $url = 'http://';
         }
         $url .= 'bitbucket.org/' . $this->payload->name() . '.git';
         return $url;
     }
-    
 }

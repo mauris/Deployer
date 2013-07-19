@@ -20,7 +20,8 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-class Commit {
+class Commit
+{
     
     /**
      * The commit ID
@@ -42,7 +43,8 @@ class Commit {
      * @param string $message The commit message
      * @since 1.0.1
      */
-    public function __construct($commit, $message){
+    public function __construct($commit, $message)
+    {
         $this->commit = $commit;
         $this->message = $message;
     }
@@ -52,7 +54,8 @@ class Commit {
      * @return string Returns the commit ID
      * @since 1.0.1
      */
-    public function commit(){
+    public function commit()
+    {
         return $this->commit;
     }
     
@@ -62,8 +65,8 @@ class Commit {
      * @return string Returns the commit message
      * @since 1.0.1
      */
-    public function message(){
+    public function message()
+    {
         return $this->message;
     }
-    
 }

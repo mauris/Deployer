@@ -23,7 +23,8 @@ use Symfony\Component\Process\Process;
  * @package Deployer
  * @since 1.0.0
  */
-abstract class Deployer{
+abstract class Deployer
+{
     
     /**
      * The keyword for deploying the commit
@@ -111,22 +112,25 @@ abstract class Deployer{
      * Create a new Deployer object
      * @since 1.0.0
      */
-    public function __construct(Payload $payload, $options = null){
+    public function __construct(Payload $payload, $options = null)
+    {
         $obj = $this;
-        set_error_handler(function($errno, $errstr, $errfile = null, $errline = null, $errcontext = null )use($obj){
-            $obj->log($errstr, Deployer::LOG_ERROR);
-            throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
-        });
+        set_error_handler(
+            function ($errno, $errstr, $errfile = null, $errline = null, $errcontext = null) use ($obj) {
+                $obj->log($errstr, Deployer::LOG_ERROR);
+                throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+            }
+        );
         
         $this->payload = $payload;
-        if(is_array($options)){
+        if (is_array($options)) {
             $this->options($options);
-        }else{
+        } else {
             $this->log('Deployer started with default options.');
         }
         
-        if(!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])){
-           $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
+        if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
+            $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
         }
     }
     
@@ -135,9 +139,10 @@ abstract class Deployer{
      * @param array $options
      * @since 1.0.0
      */
-    public function options($options){
-        foreach($this->options as $key => &$value){
-            if(array_key_exists($key, $options)){
+    public function options($options)
+    {
+        foreach ($this->options as $key => &$value) {
+            if (array_key_exists($key, $options)) {
                 $value = $options[$key];
             }
         }
@@ -150,7 +155,8 @@ abstract class Deployer{
      * @param string $password The password
      * @since 1.0.0
      */
-    public function login($username, $password){
+    public function login($username, $password)
+    {
         $this->username = $username;
         $this->password = $password;
         $this->options['https'] = true;
@@ -163,16 +169,20 @@ abstract class Deployer{
      * @param string $type (optional) The log type
      * @since 1.0.0
      */
-    public function log($message, $type = self::LOG_INFO){
+    public function log($message, $type = self::LOG_INFO)
+    {
         $file = $this->options['logFile'];
-        if($file){
+        if ($file) {
             $fp = fopen($file, 'a');
-            fwrite($fp, sprintf(
+            fwrite(
+                $fp,
+                sprintf(
                     "%s [%s]: %s\n",
                     date($this->options['dateFormat']),
                     $type,
                     $message
-                ));
+                )
+            );
             fclose($fp);
             chmod($file, 0666);
         }
@@ -183,15 +193,16 @@ abstract class Deployer{
      * @param string $cmd The command to execute
      * @since 1.0.0
      */
-    public function execute($cmd){
+    public function execute($cmd)
+    {
         $this->log(sprintf('Executing command: %s', $cmd));
         $process = new Process($cmd);
         if ($process->run() == 0) {
             $output = $process->getOutput();
-        }else{
-            throw new \RuntimeException('Failed to run command "'.$cmd.'". Output: ' . $process->getOutput());
+        } else {
+            throw new \RuntimeException('Failed to run command "' . $cmd . '". Output: ' . $process->getOutput());
         }
-        if($output){
+        if ($output) {
             $this->log(sprintf("Output:\n%s", $output));
         }
     }
@@ -202,18 +213,21 @@ abstract class Deployer{
      * @return boolean Tells if successful or not.
      * @since 1.0.0
      */
-    protected static function destroyDir($dir){
-        if(!file_exists($dir)){
+    protected static function destroyDir($dir)
+    {
+        if (!file_exists($dir)) {
             return false;
         }
-        if (!is_dir($dir) || is_link($dir)){
-            return unlink($dir); 
+        if (!is_dir($dir) || is_link($dir)) {
+            return unlink($dir);
         }
-        foreach (scandir($dir) as $file) { 
-            if ($file == '.' || $file == '..') continue; 
+        foreach (scandir($dir) as $file) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
             self::destroyDir($dir . DIRECTORY_SEPARATOR . $file);
-        } 
-        return rmdir($dir); 
+        }
+        return rmdir($dir);
     }
     
     /**
@@ -222,13 +236,16 @@ abstract class Deployer{
      * @param integer $mode The permissions to set
      * @since 1.0.0
      */
-    protected static function chmodR($dir, $mode){
-        if(!file_exists($dir)){
+    protected static function chmodR($dir, $mode)
+    {
+        if (!file_exists($dir)) {
             return;
         }
-        if (is_dir($dir) && !is_link($dir)){
-            foreach (scandir($dir) as $file) { 
-                if ($file == '.' || $file == '..') continue; 
+        if (is_dir($dir) && !is_link($dir)) {
+            foreach (scandir($dir) as $file) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
                 self::chmodR($dir . DIRECTORY_SEPARATOR . $file, $mode);
             }
         }
@@ -240,10 +257,10 @@ abstract class Deployer{
      * @throws Exception Thrown when requestor IP is not valid
      * @since 1.0.0
      */
-    protected function ipFilter(){
+    protected function ipFilter()
+    {
         $ipAddress = $_SERVER['REMOTE_ADDR'];
-        if($this->options['ipFilter'] 
-                && !in_array($ipAddress, (array)$this->options['ipFilter'])){
+        if ($this->options['ipFilter'] && !in_array($ipAddress, (array)$this->options['ipFilter'])) {
             throw new \Exception('Client IP not in valid range.');
         }
         $this->log('IP Address ' . $ipAddress . ' filtered.');
@@ -254,28 +271,29 @@ abstract class Deployer{
      * @return string The URL returned
      * @since 1.0.0
      */
-    public abstract function buildUrl();
+    abstract public function buildUrl();
     
     /**
      * Find the next commit to deploy based on the rules of [deploy] and [skipdeploy]
      * @return string Returns the commit to clone
      * @since 1.0.0
      */
-    protected function findCommit(){
+    protected function findCommit()
+    {
         $node = null;
         $commits = array_reverse($this->payload->commits());
-        if($this->options['autoDeploy']){
-            foreach($commits as $commit){
+        if ($this->options['autoDeploy']) {
+            foreach ($commits as $commit) {
                 /* @var $commit \Deployer\Payload\Commit */
-                if(strpos($commit->message(), self::HOOK_SKIP_KEY) === false){
+                if (strpos($commit->message(), self::HOOK_SKIP_KEY) === false) {
                     $node = $commit->commit();
                     break;
                 }
                 $this->log('Skipping node "' . $commit->commit() . '".');
             }
-        }else{
-            foreach($commits as $commit){
-                if(strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false){
+        } else {
+            foreach ($commits as $commit) {
+                if (strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
                     $node = $commit->commit();
                     break;
                 }
@@ -289,11 +307,12 @@ abstract class Deployer{
      * Perform the deployment operations
      * @since 1.0.0
      */
-    public function deploy(){
+    public function deploy()
+    {
         $url = $this->buildUrl();
         $node = $this->findCommit();
         
-        if($url && $node){
+        if ($url && $node) {
             $this->log(sprintf('Commit "%s" will be checked out.', $node));
             $path = realpath($this->options['target']);
             
@@ -303,13 +322,13 @@ abstract class Deployer{
             set_time_limit(0);
             
             $this->log('Checking target directory...');
-            if(!is_dir($path)){
+            if (!is_dir($path)) {
                 mkdir($path);
             }
             chdir($path);
-            try{
+            try {
                 $this->execute('git rev-parse');
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 $this->log('Repository not found. Cloning repository...');
                 $this->execute('git init');
                 $this->execute(sprintf('git remote add origin "%s"', $url));
@@ -319,10 +338,9 @@ abstract class Deployer{
             $this->execute(sprintf('git checkout %s', $node));
             
             chdir($currentDir);
-        }else{
+        } else {
             $this->log('No node found to deploy.');
         }
         $this->log('Deploy completed.');
     }
-    
 }

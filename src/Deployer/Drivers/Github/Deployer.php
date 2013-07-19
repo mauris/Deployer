@@ -23,30 +23,33 @@ use Deployer\Deployer as BaseDeployer;
  * @package Deployer\Drivers\Github
  * @since 1.0.0
  */
-class Deployer extends BaseDeployer {
-    
-    public function __construct(BasePayload $payload, $options = null) {
+class Deployer extends BaseDeployer
+{
+    public function __construct(BasePayload $payload, $options = null)
+    {
         $this->options['ipFilter'] = array(
-            '207.97.227.253', '50.57.128.197', '108.171.174.178'
+            '207.97.227.253',
+            '50.57.128.197',
+            '108.171.174.178'
         );
         parent::__construct($payload, $options);
     }
     
-    public function buildUrl(){
-        if($this->options['https']){
+    public function buildUrl()
+    {
+        if ($this->options['https']) {
             $url = 'https://';
-            if($this->username){
+            if ($this->username) {
                 $url .= urlencode($this->username);
-                if($this->password){
+                if ($this->password) {
                     $url .= ':' . urlencode($this->password);
                 }
                 $url .= '@';
             }
-        }else{
+        } else {
             $url = 'http://';
         }
         $url .= 'github.com/' . $this->payload->name() . '.git';
         return $url;
     }
-    
 }

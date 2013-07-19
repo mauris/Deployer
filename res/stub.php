@@ -13,4 +13,4 @@
 Phar::mapPhar('deployer.phar');
 require 'phar://deployer.phar/src/Deployer/Bootstrap.php';
 
-__HALT_COMPILER();
+__halt_compiler();

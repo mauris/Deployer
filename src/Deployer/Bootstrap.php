@@ -20,15 +20,17 @@ namespace Deployer;
  * @package Deployer
  * @since 1.0.0
  */
-class Bootstrap {
-
-    private static function acquire($file) {
+class Bootstrap
+{
+    private static function acquire($file)
+    {
         if (is_file($file)) {
             return include($file);
         }
     }
 
-    public static function run() {
+    public static function run()
+    {
         if (!($loader = self::acquire(__DIR__ . '/../../vendor/autoload.php'))) {
             echo 'You must set up project\'s dependencies first by running the following commands:' . PHP_EOL;
             echo "    curl -s https://getcomposer.org/installer | php\n";
@@ -37,7 +39,6 @@ class Bootstrap {
         }
         return $loader;
     }
-
 }
 
 return Bootstrap::run();
