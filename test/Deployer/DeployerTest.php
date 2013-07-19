@@ -66,14 +66,6 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Deployer\Deployer::log
-     */
-    public function testLog()
-    {
-        $this->assertTrue(method_exists($this->object, 'log'));
-    }
-
-    /**
      * @covers Deployer\Deployer::execute
      */
     public function testExecute()
