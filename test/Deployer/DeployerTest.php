@@ -25,32 +25,17 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $this->object = $this->getMockForAbstractClass('\Deployer\Deployer', array($payload));
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        
-    }
-
-    /**
-     * @covers Deployer\Deployer::options
-     */
     public function testOptions()
     {
         $this->object->options(array('logFile' => false, 'branch' => 'test', 'blah' => null));
         $property = new \ReflectionProperty(get_class($this->object), 'options');
         $property->setAccessible(true);
         $options = $property->getValue($this->object);
-        $this->assertCount(8, $options);
+        $this->assertCount(7, $options);
         $this->assertEquals(false, $options['logFile']);
         $this->assertEquals('test', $options['branch']);
     }
 
-    /**
-     * @covers Deployer\Deployer::login
-     */
     public function testLogin()
     {
         $usernameProp = new \ReflectionProperty(get_class($this->object), 'username');
@@ -59,23 +44,17 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $passwordProp->setAccessible(true);
         $this->assertEquals(null, $usernameProp->getValue($this->object));
         $this->assertEquals(null, $passwordProp->getValue($this->object));
-        
+
         $this->object->login('user', 'password');
         $this->assertEquals('user', $usernameProp->getValue($this->object));
         $this->assertEquals('password', $passwordProp->getValue($this->object));
     }
 
-    /**
-     * @covers Deployer\Deployer::execute
-     */
     public function testExecute()
     {
         $this->assertTrue(method_exists($this->object, 'execute'));
     }
 
-    /**
-     * @covers Deployer\Deployer::deploy
-     */
     public function testDeploy()
     {
         $this->assertTrue(method_exists($this->object, 'deploy'));
