@@ -23,23 +23,25 @@ use Deployer\Payload\Commit;
  * @package Deployer\Drivers\Github
  * @since 1.0.1
  */
-class Payload extends BasePayload {
-    
-    public function commits() {
+class Payload extends BasePayload
+{
+    public function commits()
+    {
         $baseCommits = $this->payload['commits'];
         $commits = array();
-        foreach($baseCommits as $commit){
+        foreach ($baseCommits as $commit) {
             $commits[] = new Commit($commit['id'], $commit['message']);
         }
         return $commits;
     }
 
-    public function name() {
+    public function name()
+    {
         return $this->payload['repository']['owner']['name'] . '/' . $this->payload['repository']['name'];
     }
     
-    public function load($config = array()){
+    public function load($config = array())
+    {
         return new Deployer($this, $config);
     }
-
 }

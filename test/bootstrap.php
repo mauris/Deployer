@@ -1,2 +1,4 @@
 <?php
-require(__DIR__ . '/../src/Deployer/Bootstrap.php');
+
+$loader = require(__DIR__ . '/../vendor/autoload.php');
+$loader->add('Deployer\\', __DIR__);

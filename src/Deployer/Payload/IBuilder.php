@@ -20,12 +20,12 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-interface IBuilder {
+interface IBuilder
+{
     /**
      * Load the payload from the input
      * @return \Deployer\Payload\Payload
      * @since 1.0.1
      */
     public static function fromCurrent();
-    
 }

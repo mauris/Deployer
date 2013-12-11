@@ -23,23 +23,25 @@ use Deployer\Payload\Commit;
  * @package Deployer\Drivers\BitBucket
  * @since 1.0.1
  */
-class Payload extends BasePayload {
-    
-    public function commits() {
+class Payload extends BasePayload
+{
+    public function commits()
+    {
         $baseCommits = $this->payload['commits'];
         $commits = array();
-        foreach($baseCommits as $commit){
+        foreach ($baseCommits as $commit) {
             $commits[] = new Commit($commit['raw_node'], $commit['message']);
         }
         return $commits;
     }
 
-    public function name() {
+    public function name()
+    {
         return $this->payload['repository']['owner'] . '/' . $this->payload['repository']['slug'];
     }
     
-    public function load($config = array()){
+    public function load($config = array())
+    {
         return new Deployer($this, $config);
     }
-
 }

@@ -20,8 +20,8 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-interface IPayload {
-    
+interface IPayload
+{
     public function __construct($payload);
     
     public function name();
@@ -29,5 +29,4 @@ interface IPayload {
     public function commits();
     
     public function load($config = array());
-    
 }
