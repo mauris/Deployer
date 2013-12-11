@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "89dac568c93599e2c52366d0fd5c2d86",
+    "hash": "39e4fa7553edafd35efc061c372849f5",
     "packages": [
         {
             "name": "packfire/logger",
@@ -79,17 +79,17 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.2.4",
+            "version": "v2.2.11",
             "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "v2.2.4"
+                "reference": "b495834f2faadc533bdecf813f9ae8c509a4b52c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/v2.2.4",
-                "reference": "v2.2.4",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/b495834f2faadc533bdecf813f9ae8c509a4b52c",
+                "reference": "b495834f2faadc533bdecf813f9ae8c509a4b52c",
                 "shasum": ""
             },
             "require": {
@@ -122,7 +122,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "http://symfony.com",
-            "time": "2013-06-13 15:57:04"
+            "time": "2013-11-25 10:21:43"
         }
     ],
     "packages-dev": [
