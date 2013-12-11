@@ -13,6 +13,7 @@ namespace Deployer;
 
 use Deployer\Payload\Payload;
 use Symfony\Component\Process\Process;
+use Packfire\Logger\File as Logger;
 
 /** 
  * The deployer generic class that helps to pull Git repositories
@@ -23,183 +24,140 @@ use Symfony\Component\Process\Process;
  * @package Deployer
  * @since 1.0.0
  */
-abstract class Deployer{
-    
+abstract class Deployer
+{
     /**
      * The keyword for deploying the commit
      */
     const HOOK_DEPLOY_KEY = '[deploy]';
-    
+
     /**
      * The keyword for skipping this commit
      */
     const HOOK_SKIP_KEY = '[skipdeploy]';
-    
-    const LOG_INFO = 'info';
-    
-    const LOG_WARNING = 'warn';
-    
-    const LOG_ERROR = 'error';
-    
-    const LOG_DEBUG = 'debug';
-    
+
     protected $options = array(
-        
+
         /**
          * Set whether to use HTTPS or not. If authentication is used,
          * this is overwritten to be true.
          */
         'https' => true,
-        
+
         /**
          * The target directory to deploy
          */
         'target' => __DIR__,
-        
+
         /**
          * Determine whether deploys will be automated.
          * if true, only commits with [skipdeploy] will be skipped, and the rest will be deployed.
          * if false, only commits with [deploy] will be deployed, and the rest will be skipped.
          */
         'autoDeploy' => true,
-        
+
         /**
          * The log date time format
          * See http://www.php.net/manual/en/function.date.php for formatting syntax.
          */
         'dateFormat' => 'Y-m-j H:i:sO',
-        
+
         /**
          * The deployment log file
          */
         'logFile' => 'deploy.log',
-        
-        /**
-         * Set whether last deployment log file is generated
-         */
-        'lastLogFile' => true,
-        
+
         /**
          * The default branch to fetch
          */
         'branch' => 'master',
-        
+
         /**
          * An array of IPs that is valid for the deployment operation
          */
-        'ipFilter' => null,
-        
+        'ipFilter' => null
     );
-    
+
     /**
      * The username for HTTPS authentication
      * @var string
      * @since 1.0.0
      */
     protected $username;
-    
+
     /**
      * The username for HTTPS authentication
      * @var string
      * @since 1.0.0
      */
     protected $password;
-    
+
     /**
      * The payload
      * @var \Deployer\Payload\Payload
      * @since 1.0.1
      */
     protected $payload;
-    
+
+    /**
+     * The logger that writes
+     * @var \Psr\Log\LoggerInterface
+     * @since 1.1.3
+     */
+    protected $logger;
+
     /**
      * Create a new Deployer object
      * @since 1.0.0
      */
-    public function __construct(Payload $payload, $options = null){
-        $obj = $this;
-        set_error_handler(function($errno, $errstr, $errfile = null, $errline = null, $errcontext = null )use($obj){
-            $obj->log($errstr, Deployer::LOG_ERROR);
-            throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
-        });
-        
-        $this->payload = $payload;
-        if(is_array($options)){
+    public function __construct(Payload $payload, $options = null)
+    {
+        set_error_handler(array($this, 'errorHandler'));
+
+        if (is_array($options)) {
             $this->options($options);
-        }else{
-            $this->log('Deployer started with default options.');
         }
-        
-        if($this->options['logFile']){
-            if(!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])){
-               $this->options['logFile'] = $this->options['target'] . '/' . $this->options['logFile'];
-            }
-            
-            if($this->options['lastLogFile']){
-                $info = pathinfo($this->options['logFile']);
-                $this->options['lastLogFile'] = $info['dirname'] . '/' . $info['filename'] . '.last.' . $info['extension'];
-                if(file_exists($this->options['lastLogFile'])){
-                    @unlink($this->options['lastLogFile']);
-                }
-            }
+
+        // if it is not an absolute path then we use the current working directory
+        if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
+            $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
         }
+
+        $this->logger = new Logger($this->options['logFile']);
+        $this->payload = $payload;
     }
-    
+
+    public function errorHandler($errno, $errstr, $errfile = null, $errline = null, $errcontext = null)
+    {
+        throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+    }
+
     /**
      * Update the options in Deployer
      * @param array $options
      * @since 1.0.0
      */
-    public function options($options){
-        foreach($this->options as $key => &$value){
-            if(array_key_exists($key, $options)){
+    public function options($options)
+    {
+        foreach ($this->options as $key => &$value) {
+            if (array_key_exists($key, $options)) {
                 $value = $options[$key];
             }
         }
-        $this->log('Options updated:' . json_encode($this->options));
     }
-    
+
     /**
      * Enter the credentials for authentication
      * @param string $username The username
      * @param string $password The password
      * @since 1.0.0
      */
-    public function login($username, $password){
+    public function login($username, $password)
+    {
         $this->username = $username;
         $this->password = $password;
         $this->options['https'] = true;
-        $this->log(sprintf('Signing in as "%s".', $username));
-    }
-    
-    /**
-     * Write to the log file
-     * @param string $message The message to the log file
-     * @param string $type (optional) The log type
-     * @since 1.0.0
-     */
-    public function log($message, $type = self::LOG_INFO){
-        $log = $this->options['logFile'];
-        if($log){
-            $msg = sprintf(
-                "%s [%s]: %s\n",
-                date($this->options['dateFormat']),
-                $type,
-                $message
-            );
-            $fp = fopen($log, 'a');
-            fwrite($fp, $msg);
-            fclose($fp);
-            chmod($log, 0666);
-            
-            if($this->options['lastLogFile']){
-                $lastLog = $this->options['lastLogFile'];
-                $llfp = fopen($lastLog, 'a');
-                fwrite($llfp, $msg);
-                fclose($llfp);
-                chmod($lastLog, 0666);
-            }
-        }
+        $this->logger->info(sprintf('Signing in as "%s".', $username));
     }
 
     /**
@@ -207,146 +165,154 @@ abstract class Deployer{
      * @param string $cmd The command to execute
      * @since 1.0.0
      */
-    public function execute($cmd){
-        $this->log(sprintf('Executing command: %s', $cmd));
+    public function execute($cmd)
+    {
+        $this->logger->info(sprintf('Executing command: %s', $cmd));
         $process = new Process($cmd);
         if ($process->run() == 0) {
             $output = $process->getOutput();
-        }else{
-            throw new \RuntimeException('Failed to run command "'.$cmd.'". Output: ' . $process->getOutput());
+        } else {
+            throw new \RuntimeException('Failed to run command "' . $cmd . '". Output: ' . $process->getOutput());
         }
-        if($output){
-            $this->log(sprintf("Output:\n%s", $output));
+        if ($output) {
+            $this->logger->info(sprintf("Output:\n%s", $output));
         }
     }
-    
+
     /**
      * Recursively destroy a directory
      * @param string $dir The directory to destroy
      * @return boolean Tells if successful or not.
      * @since 1.0.0
      */
-    protected static function destroyDir($dir){
-        if(!file_exists($dir)){
+    protected static function destroyDir($dir)
+    {
+        if (!file_exists($dir)) {
             return false;
         }
-        if (!is_dir($dir) || is_link($dir)){
-            return unlink($dir); 
+        if (!is_dir($dir) || is_link($dir)) {
+            return unlink($dir);
         }
-        foreach (scandir($dir) as $file) { 
-            if ($file == '.' || $file == '..') continue; 
+        foreach (scandir($dir) as $file) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
             self::destroyDir($dir . DIRECTORY_SEPARATOR . $file);
-        } 
-        return rmdir($dir); 
+        }
+        return rmdir($dir);
     }
-    
+
     /**
      * Recursively change the permissions of files and folders
      * @param string $dir The path to set new permissions
      * @param integer $mode The permissions to set
      * @since 1.0.0
      */
-    protected static function chmodR($dir, $mode){
-        if(!file_exists($dir)){
+    protected static function chmodR($dir, $mode)
+    {
+        if (!file_exists($dir)) {
             return;
         }
-        if (is_dir($dir) && !is_link($dir)){
-            foreach (scandir($dir) as $file) { 
-                if ($file == '.' || $file == '..') continue; 
+        if (is_dir($dir) && !is_link($dir)) {
+            foreach (scandir($dir) as $file) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
                 self::chmodR($dir . DIRECTORY_SEPARATOR . $file, $mode);
             }
         }
         chmod($dir, $mode);
     }
-    
+
     /**
      * Performs IP filtering check
      * @throws Exception Thrown when requestor IP is not valid
      * @since 1.0.0
      */
-    protected function ipFilter(){
+    protected function ipFilter()
+    {
         $ipAddress = $_SERVER['REMOTE_ADDR'];
-        if($this->options['ipFilter'] 
-                && !in_array($ipAddress, (array)$this->options['ipFilter'])){
+        if ($this->options['ipFilter'] && !in_array($ipAddress, (array)$this->options['ipFilter'])) {
             throw new \Exception('Client IP not in valid range.');
         }
-        $this->log('IP Address ' . $ipAddress . ' filtered.');
+        $this->logger->info('IP Address ' . $ipAddress . ' filtered.');
     }
-    
+
     /**
      * Build the URL to clone the git repository
      * @return string The URL returned
      * @since 1.0.0
      */
-    public abstract function buildUrl();
-    
+    abstract public function buildUrl();
+
     /**
      * Find the next commit to deploy based on the rules of [deploy] and [skipdeploy]
      * @return string Returns the commit to clone
      * @since 1.0.0
      */
-    protected function findCommit(){
+    protected function findCommit()
+    {
         $node = null;
         $commits = array_reverse($this->payload->commits());
-        if($this->options['autoDeploy']){
-            foreach($commits as $commit){
+        if ($this->options['autoDeploy']) {
+            foreach ($commits as $commit) {
                 /* @var $commit \Deployer\Payload\Commit */
-                if(strpos($commit->message(), self::HOOK_SKIP_KEY) === false){
+                if (strpos($commit->message(), self::HOOK_SKIP_KEY) === false) {
                     $node = $commit->commit();
                     break;
                 }
-                $this->log('Skipping node "' . $commit->commit() . '".');
+                $this->logger->info('Skipping node "' . $commit->commit() . '".');
             }
-        }else{
-            foreach($commits as $commit){
-                if(strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false){
+        } else {
+            foreach ($commits as $commit) {
+                if (strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
                     $node = $commit->commit();
                     break;
                 }
-                $this->log('Skipping node "' . $commit->commit() . '".');
+                $this->logger->info('Skipping node "' . $commit->commit() . '".');
             }
         }
         return $node;
     }
-    
+
     /**
      * Perform the deployment operations
      * @since 1.0.0
      */
-    public function deploy(){
+    public function deploy()
+    {
         $url = $this->buildUrl();
         $node = $this->findCommit();
-        
-        if($url && $node){
-            $this->log(sprintf('Commit "%s" will be checked out.', $node));
-            $path = realpath($this->options['target']);
-            
+
+        if ($url && $node) {
+            $this->logger->info(sprintf('Commit "%s" will be checked out.', $node));
+            $path = $this->options['target'];
+
             $currentDir = getcwd();
-            
+
             ignore_user_abort(true);
             set_time_limit(0);
-            
-            $this->log('Checking target directory...');
-            if(!is_dir($path)){
+
+            if (!is_dir($path)) {
+                $this->logger->info('Target directory not found, creating directory at ' . $path);
                 mkdir($path);
             }
             chdir($path);
-            try{
+            try {
                 $this->execute('git rev-parse');
-            }catch(\Exception $e){
-                $this->log('Repository not found. Cloning repository...');
+            } catch (\Exception $e) {
+                $this->logger->info('Repository not found. Cloning repository.');
                 $this->execute('git init');
                 $this->execute(sprintf('git remote add origin "%s"', $url));
             }
-            $this->log(sprintf('Fetching changes...', $path));
+            $this->logger->info(sprintf('Checking out repository at %s', $node));
             $this->execute(sprintf('git pull origin %s', $this->options['branch']));
             $this->execute(sprintf('git checkout %s', $node));
-            
+
             chdir($currentDir);
-        }else{
-            $this->log('No node found to deploy.');
+        } else {
+            $this->logger->info('No node found to deploy.');
         }
-        $this->log('Deploy completed.');
+        $this->logger->info('Deploy completed.');
     }
-    
 }
