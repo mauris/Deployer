@@ -14,10 +14,6 @@ use Deployer\Payload\Payload;
  */
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * The mock object of Deployer
-     * @var PHPUnit_Framework_MockObject_MockObject|Deployer
-     */
     private $object;
 
     /**
@@ -28,6 +24,7 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
     {
         $payload = $this->getMockForAbstractClass('\Deployer\Payload\Payload', array(array()));
         $this->object = $this->getMockForAbstractClass('\Deployer\Deployer', array($payload));
+        $this->object->options(array('logFile' => false));
     }
 
     public function testOptions()
