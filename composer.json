@@ -1,7 +1,8 @@
 {
     "require":{
         "symfony/process": "2.2.*",
-        "packfire/logger": "1.0.*"
+        "packfire/logger": "1.0.*",
+        "psr/log": "1.0.*"
     },
     "autoload": {
         "psr-0": {"Deployer": "src/"}
