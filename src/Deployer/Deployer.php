@@ -9,6 +9,7 @@ namespace Deployer;
 use Deployer\Payload\Payload;
 use Symfony\Component\Process\Process;
 use Packfire\Logger\File as Logger;
+use Psr\Log\NullLogger;
 
 /**
  * The deployer generic class that helps to pull Git repositories
@@ -112,13 +113,6 @@ abstract class Deployer
         if (is_array($options)) {
             $this->options($options);
         }
-
-        // if it is not an absolute path then we use the current working directory
-        if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
-            $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
-        }
-
-        $this->logger = new Logger($this->options['logFile']);
         $this->payload = $payload;
     }
 
@@ -138,6 +132,17 @@ abstract class Deployer
             if (array_key_exists($key, $options)) {
                 $value = $options[$key];
             }
+        }
+
+        if ($this->options['logFile']) {
+            // if it is not an absolute path then we use the current working directory
+            if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
+                $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
+            }
+
+            $this->logger = new Logger($this->options['logFile']);
+        } else {
+            $this->logger = new NullLogger();
         }
     }
 
