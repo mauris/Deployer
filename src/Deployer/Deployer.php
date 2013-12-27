@@ -109,6 +109,7 @@ abstract class Deployer
     public function __construct(Payload $payload, $options = null)
     {
         set_error_handler(array($this, 'errorHandler'));
+        $this->logger = new NullLogger();
 
         if (is_array($options)) {
             $this->options($options);
@@ -134,15 +135,18 @@ abstract class Deployer
             }
         }
 
-        if ($this->options['logFile']) {
-            // if it is not an absolute path then we use the current working directory
-            if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
-                $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
-            }
+        // if there is a change in log file
+        if (isset($options['logFile'])) {
+            if ($this->options['logFile']) {
+                // if it is not an absolute path then we use the current working directory
+                if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
+                    $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
+                }
 
-            $this->logger = new Logger($this->options['logFile']);
-        } else {
-            $this->logger = new NullLogger();
+                $this->logger = new Logger($this->options['logFile']);
+            } else {
+                $this->logger = new NullLogger();
+            }
         }
     }
 
