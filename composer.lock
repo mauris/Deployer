@@ -3,20 +3,20 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "07212abf282d1421bf8eda287c730f12",
+    "hash": "733ae01a385ccce8976e9ce653290c36",
     "packages": [
         {
             "name": "packfire/logger",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/packfire/logger.git",
-                "reference": "1.0.0"
+                "reference": "13e72a46d167e560a992ea9e28053d9d6af88106"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/packfire/logger/zipball/1.0.0",
-                "reference": "1.0.0",
+                "url": "https://api.github.com/repos/packfire/logger/zipball/13e72a46d167e560a992ea9e28053d9d6af88106",
+                "reference": "13e72a46d167e560a992ea9e28053d9d6af88106",
                 "shasum": ""
             },
             "require": {
@@ -33,11 +33,13 @@
             "authors": [
                 {
                     "name": "Sam-Mauris Yong",
-                    "email": "sam@mauris.sg"
+                    "email": "sam@mauris.sg",
+                    "homepage": "http://mauris.sg/",
+                    "role": "Developer"
                 }
             ],
             "description": " A standard logger that implements Psr/Log ",
-            "time": "2013-05-28 22:33:49"
+            "time": "2014-01-04 01:49:49"
         },
         {
             "name": "psr/log",
