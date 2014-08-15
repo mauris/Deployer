@@ -6,7 +6,7 @@
 
 namespace Deployer\Payload;
 
-/** 
+/**
  * The payload handler interface
  *
  * @author Sam-Mauris Yong / mauris@hotmail.sg
@@ -18,10 +18,10 @@ namespace Deployer\Payload;
 interface IPayload
 {
     public function __construct($payload);
-    
+
     public function name();
-    
+
     public function commits();
-    
+
     public function load($config = array());
 }
