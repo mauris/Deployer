@@ -2,7 +2,7 @@
 
 A simple Git web hook and deployment activator for continuous integration.
 
-[![Build Status](https://secure.travis-ci.org/mauris/Deployer.png?branch=master)](http://travis-ci.org/thephpdeveloper/Deployer)
+[![Build Status](https://secure.travis-ci.org/mauris/Deployer.png?branch=master)](https://travis-ci.org/mauris/Deployer)
 
 Basically what Deployer does is simple:
 
