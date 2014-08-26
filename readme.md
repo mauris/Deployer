@@ -14,6 +14,14 @@ You no longer have to deploy web applications via remote SSH or FTP anymore. Sim
 
 A sample web service / hook script is included as `example/hook.php`.
 
+##Similar Projects
+
+Do also check out the following Git deployers to see if they suit your taste better:
+
+- https://github.com/chernjie/deployer
+- https://github.com/mislav/git-deploy
+- https://github.com/BrunoDeBarros/git-deploy-php
+
 ##Workflow
 
 ![Continuous Integration with Deployer by Sam-Mauris Yong](http://i.imgur.com/UnIMj.png)
