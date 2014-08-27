@@ -6,12 +6,15 @@
 
 namespace Deployer;
 
-class Loader
+class Definition
 {
-    private $definitions = array();
-
-    public function deploy($repository)
+    public function to($target)
     {
 
+    }
+
+    public function with($key, $value)
+    {
+        
     }
 }
