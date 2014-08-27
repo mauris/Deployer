@@ -12,6 +12,8 @@ class Loader
 
     public function deploy($repository)
     {
-
+        $definition = new Definition();
+        $definitions[] = $definition;
+        return $definition;
     }
 }
