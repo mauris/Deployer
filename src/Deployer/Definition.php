@@ -14,7 +14,7 @@ class Definition
 
     private $target;
 
-    public Definition($repository)
+    public function __construct($repository)
     {
         $this->repository = $repository;
     }
