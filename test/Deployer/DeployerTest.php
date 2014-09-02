@@ -24,18 +24,6 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
     {
         $payload = $this->getMockForAbstractClass('\Deployer\Payload\Payload', array(array()));
         $this->object = $this->getMockForAbstractClass('\Deployer\Deployer', array($payload));
-        $this->object->options(array('logFile' => false));
-    }
-
-    public function testOptions()
-    {
-        $this->object->options(array('logFile' => false, 'branch' => 'test', 'blah' => null));
-        $property = new \ReflectionProperty(get_class($this->object), 'options');
-        $property->setAccessible(true);
-        $options = $property->getValue($this->object);
-        $this->assertCount(7, $options);
-        $this->assertEquals(false, $options['logFile']);
-        $this->assertEquals('test', $options['branch']);
     }
 
     public function testLogin()
