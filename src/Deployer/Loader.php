@@ -26,5 +26,8 @@ class Loader
         } else {
             $payload = Factory::fromCurrent()->create();
         }
+        
+        $deployer = $payload->load();
+        $deployer->deploy();
     }
 }
