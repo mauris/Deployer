@@ -206,23 +206,16 @@ abstract class Deployer
     {
         $node = null;
         $commits = array_reverse($this->payload->commits());
-        if ($this->options['autoDeploy']) {
-            foreach ($commits as $commit) {
-                /* @var $commit \Deployer\Payload\Commit */
-                if (strpos($commit->message(), self::HOOK_SKIP_KEY) === false) {
-                    $node = $commit->commit();
-                    break;
-                }
-                $this->logger->info('Skipping node "' . $commit->commit() . '".');
+        foreach ($commits as $commit) {
+            /* @var $commit \Deployer\Payload\Commit */
+            if ($this->options['autoDeploy'] && strpos($commit->message(), self::HOOK_SKIP_KEY) === false) {
+                $node = $commit->commit();
+                break;
+            } else if(!$this->options['autoDeploy'] && strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
+                $node = $commit->commit();
+                break;
             }
-        } else {
-            foreach ($commits as $commit) {
-                if (strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
-                    $node = $commit->commit();
-                    break;
-                }
-                $this->logger->info('Skipping node "' . $commit->commit() . '".');
-            }
+            $this->logger->info('Skipping node "' . $commit->commit() . '".');
         }
         return $node;
     }
