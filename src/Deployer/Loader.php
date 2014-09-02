@@ -16,4 +16,9 @@ class Loader
         $definitions[] = $definition;
         return $definition;
     }
+
+    public function load($payload = null)
+    {
+        
+    }
 }
