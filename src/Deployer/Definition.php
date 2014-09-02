@@ -29,6 +29,11 @@ class Definition
         return $this->target;
     }
 
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function to($target)
     {
         $this->target = $target;
