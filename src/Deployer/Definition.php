@@ -10,9 +10,16 @@ class Definition
 {
     private $repository;
 
+    private $options = array();
+
     public Definition($repository)
     {
         $this->repository = $repository;
+    }
+
+    public function getRepository()
+    {
+        return $this->repository;
     }
 
     public function to($target)
@@ -22,6 +29,6 @@ class Definition
 
     public function with($key, $value)
     {
-        
+        $this->options[$key] = $value;
     }
 }
