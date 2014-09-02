@@ -112,7 +112,7 @@ abstract class Deployer
         $this->logger = new NullLogger();
 
         if (is_array($options)) {
-            $this->options($options);
+            $this->loadOptions($options);
         }
         $this->payload = $payload;
     }
@@ -125,9 +125,9 @@ abstract class Deployer
     /**
      * Update the options in Deployer
      * @param array $options
-     * @since 1.0.0
+     * @since 2.0.0
      */
-    public function options($options)
+    protected function loadOptions($options)
     {
         foreach ($this->options as $key => &$value) {
             if (array_key_exists($key, $options)) {
@@ -136,17 +136,13 @@ abstract class Deployer
         }
 
         // if there is a change in log file
-        if (isset($options['logFile'])) {
-            if ($this->options['logFile']) {
-                // if it is not an absolute path then we use the current working directory
-                if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
-                    $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
-                }
-
-                $this->logger = new Logger($this->options['logFile']);
-            } else {
-                $this->logger = new NullLogger();
+        if (isset($options['logFile']) && $this->options['logFile']) {
+            // if it is not an absolute path then we use the current working directory
+            if (!preg_match('/^(?:\/|\\|[a-z]\:\\\).*$/i', $this->options['logFile'])) {
+                $this->options['logFile'] = getcwd() . '/' . $this->options['logFile'];
             }
+
+            $this->logger = new Logger($this->options['logFile']);
         }
     }
 
