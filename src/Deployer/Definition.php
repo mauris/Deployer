@@ -35,10 +35,12 @@ class Definition
     public function to($target)
     {
         $this->options['target'] = $target;
+        return $this;
     }
 
     public function with($key, $value)
     {
         $this->options[$key] = $value;
+        return $this;
     }
 }
