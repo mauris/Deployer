@@ -108,18 +108,15 @@ abstract class Deployer
      */
     public function __construct(Payload $payload, $options = null)
     {
-        set_error_handler(array($this, 'errorHandler'));
+        set_error_handler(function ($errno, $errstr, $errfile = null, $errline = null) {
+            throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+        });
         $this->logger = new NullLogger();
 
         if (is_array($options)) {
             $this->loadOptions($options);
         }
         $this->payload = $payload;
-    }
-
-    public function errorHandler($errno, $errstr, $errfile = null, $errline = null, $errcontext = null)
-    {
-        throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
     }
 
     /**
