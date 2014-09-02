@@ -26,7 +26,7 @@ class Factory implements FactoryInterface
 
     public function create()
     {
-        if (isset($this->payload['canon_url'] && $this->payload['canon_url'] == 'https://bitbucket.org') {
+        if (isset($this->payload['canon_url']) && $this->payload['canon_url'] == 'https://bitbucket.org') {
             return $this->createPayload('BitBucket');
         }
         if (isset($this->payload['repository']) && isset($this->payload['repository']['url']) && strpos($this->payload['repository']['url'], 'https://github.com/') !== false) {
