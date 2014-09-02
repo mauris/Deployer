@@ -12,8 +12,6 @@ class Definition
 
     private $options = array();
 
-    private $target;
-
     public function __construct($repository)
     {
         $this->repository = $repository;
@@ -26,7 +24,7 @@ class Definition
 
     public function getTarget()
     {
-        return $this->target;
+        return $this->options['target'];
     }
 
     public function getOptions()
@@ -36,7 +34,7 @@ class Definition
 
     public function to($target)
     {
-        $this->target = $target;
+        $this->options['target'] = $target;
     }
 
     public function with($key, $value)
