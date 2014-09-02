@@ -6,6 +6,8 @@
 
 namespace Deployer;
 
+use Deployer\Payload\Factory;
+
 class Loader
 {
     private $definitions = array();
@@ -17,8 +19,12 @@ class Loader
         return $definition;
     }
 
-    public function load($payload = null)
+    public function load($data = null)
     {
-        
+        if ($data) {
+            $payload = new Factory($data);
+        } else {
+            $payload = Factory::fromCurrent()->create();
+        }
     }
 }
