@@ -15,8 +15,10 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-interface IBuilder
+interface FactoryInterface
 {
+    public function create();
+
     /**
      * Load the payload from the input
      * @return \Deployer\Payload\Payload
