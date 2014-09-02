@@ -8,6 +8,13 @@ namespace Deployer;
 
 class Definition
 {
+    private $repository;
+
+    public Definition($repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function to($target)
     {
 
