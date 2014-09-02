@@ -177,51 +177,6 @@ abstract class Deployer
     }
 
     /**
-     * Recursively destroy a directory
-     * @param string $dir The directory to destroy
-     * @return boolean Tells if successful or not.
-     * @since 1.0.0
-     */
-    protected static function destroyDir($dir)
-    {
-        if (!file_exists($dir)) {
-            return false;
-        }
-        if (!is_dir($dir) || is_link($dir)) {
-            return unlink($dir);
-        }
-        foreach (scandir($dir) as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-            self::destroyDir($dir . DIRECTORY_SEPARATOR . $file);
-        }
-        return rmdir($dir);
-    }
-
-    /**
-     * Recursively change the permissions of files and folders
-     * @param string $dir The path to set new permissions
-     * @param integer $mode The permissions to set
-     * @since 1.0.0
-     */
-    protected static function chmodR($dir, $mode)
-    {
-        if (!file_exists($dir)) {
-            return;
-        }
-        if (is_dir($dir) && !is_link($dir)) {
-            foreach (scandir($dir) as $file) {
-                if ($file == '.' || $file == '..') {
-                    continue;
-                }
-                self::chmodR($dir . DIRECTORY_SEPARATOR . $file, $mode);
-            }
-        }
-        chmod($dir, $mode);
-    }
-
-    /**
      * Performs IP filtering check
      * @throws Exception Thrown when requestor IP is not valid
      * @since 1.0.0
