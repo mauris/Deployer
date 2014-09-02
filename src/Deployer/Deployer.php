@@ -290,7 +290,7 @@ abstract class Deployer
 
             $currentDir = getcwd();
 
-            ignore_user_abort(true);
+            ignore_user_abort("1");
             set_time_limit(0);
 
             if (!is_dir($path)) {
