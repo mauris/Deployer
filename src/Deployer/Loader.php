@@ -15,7 +15,7 @@ class Loader
     public function deploy($repository)
     {
         $definition = new Definition($repository);
-        $definitions[] = $definition;
+        $this->definitions[] = $definition;
         return $definition;
     }
 
@@ -26,7 +26,7 @@ class Loader
         } else {
             $payload = Factory::fromCurrent()->create();
         }
-        
+
         $deployer = $payload->load();
         $deployer->deploy();
     }
