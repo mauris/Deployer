@@ -211,7 +211,7 @@ abstract class Deployer
             if ($this->options['autoDeploy'] && strpos($commit->message(), self::HOOK_SKIP_KEY) === false) {
                 $node = $commit->commit();
                 break;
-            } else if(!$this->options['autoDeploy'] && strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
+            } else if (!$this->options['autoDeploy'] && strpos($commit->message(), self::HOOK_DEPLOY_KEY) !== false) {
                 $node = $commit->commit();
                 break;
             }
