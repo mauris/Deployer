@@ -10,6 +10,8 @@ class Definition
 {
     private $repository;
 
+    private $source;
+
     private $options = array();
 
     public function __construct($repository)
@@ -30,6 +32,17 @@ class Definition
     public function getOptions()
     {
         return $this->options;
+    }
+
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    public function from($source)
+    {
+        $this->source = $source;
+        return $this;
     }
 
     public function to($target)
