@@ -4,7 +4,7 @@ use Deployer\Loader;
 
 $loader = new Loader();
 
-$loader->deploy('http://github.com/mauris/Deployer')->to('../deployer');
-$loader->deploy('http://github.com/mauris/example')->to('../example')->with('username', 'User01')->with('password', 'p455w0rd');
+$loader->deploy('mauris/Deployer')->from('github')->to('../deployer');
+$loader->deploy('mauris/example')->from('github')->to('../example')->with('username', 'User01')->with('password', 'p455w0rd');
 
 $loader->load();
