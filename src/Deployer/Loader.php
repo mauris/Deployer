@@ -19,6 +19,16 @@ class Loader
         return $definition;
     }
 
+    private function findDefinition($name, $source)
+    {
+        $source = strtolower($source);
+        foreach ($this->definitions as $definition) {
+            if ($definition->getRepository() == $name && $definition->getSource() == $source) {
+                return $definition;
+            }
+        }
+    }
+
     public function load($data = null)
     {
         if ($data) {
@@ -26,6 +36,8 @@ class Loader
         } else {
             $payload = Factory::fromCurrent()->create();
         }
+
+        $definition = $this->findDefinition($payload->name(), get_class($payload));
 
         $deployer = $payload->load();
         $deployer->deploy();
