@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "733ae01a385ccce8976e9ce653290c36",
+    "hash": "b2c9c80658a49679dc26cbfd67e94def",
     "packages": [
         {
             "name": "packfire/logger",
@@ -128,21 +128,13 @@
             "time": "2013-11-25 10:21:43"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
+    "stability-flags": [],
     "prefer-stable": false,
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "platform": {
+        "php": ">=5.3.0"
+    },
+    "platform-dev": []
 }
