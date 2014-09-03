@@ -15,7 +15,7 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-abstract class Payload implements IPayload, IBuilder
+abstract class Payload implements IPayload
 {
     /**
      * The payload data
@@ -32,20 +32,5 @@ abstract class Payload implements IPayload, IBuilder
     public function __construct($payload)
     {
         $this->payload = $payload;
-    }
-
-    /**
-     * Load the payload from the input
-     * @return \Deployer\Payload\Payload Returns the payload created
-     * @throws \Exception
-     * @since 1.0.0
-     */
-    public static function fromCurrent()
-    {
-        if (isset($_POST['payload']) && $_POST['payload']) {
-            $payload = new static(json_decode($_POST['payload'], true));
-            return $payload;
-        }
-        throw new \Exception('Payload cannot be loaded from current HTTP request');
     }
 }
