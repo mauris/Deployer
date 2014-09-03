@@ -15,7 +15,7 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-abstract class Payload implements IPayload
+abstract class Payload implements PayloadInterface
 {
     /**
      * The payload data

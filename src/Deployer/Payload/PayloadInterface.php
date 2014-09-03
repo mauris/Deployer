@@ -15,7 +15,7 @@ namespace Deployer\Payload;
  * @package Deployer\Payload
  * @since 1.0.1
  */
-interface IPayload
+interface PayloadInterface
 {
     public function __construct($payload);
 
