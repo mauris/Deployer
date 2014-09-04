@@ -39,7 +39,7 @@ class Loader
 
         $definition = $this->findDefinition($payload->name(), get_class($payload));
 
-        $deployer = $payload->load();
+        $deployer = $payload->load($definition->getOptions());
         $deployer->deploy();
     }
 }
