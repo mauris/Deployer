@@ -141,6 +141,10 @@ abstract class Deployer
 
             $this->logger = new Logger($this->options['logFile']);
         }
+
+        if (isset($options['username'])) {
+            $this->login($options['username'], $options['password']);
+        }
     }
 
     /**
@@ -149,7 +153,7 @@ abstract class Deployer
      * @param string $password The password
      * @since 1.0.0
      */
-    public function login($username, $password)
+    protected function login($username, $password)
     {
         $this->username = $username;
         $this->password = $password;
