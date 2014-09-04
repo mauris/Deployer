@@ -1,4 +1,9 @@
-<?php
+<?php /*
+ * Copyright (C) 2013 Sam-Mauris Yong. All rights reserved.
+ * This file is part of the asyncloader.js project, which is released under New BSD 3-Clause license.
+ * See file LICENSE or go to http://opensource.org/licenses/BSD-3-Clause for full license details.
+ */
+
 namespace Deployer\Drivers\Github;
 
 /**
@@ -7,6 +12,16 @@ namespace Deployer\Drivers\Github;
  */
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \ErrorException
+     */
+    public function testValidateFail()
+    {
+        $source = json_decode(file_get_contents('test/sampleGoodBitBucketData.json'), true);
+        $object = new Deployer(new Payload($source), array('logFile' => null));
+        $object->buildUrl();
+    }
+
     public function testValidateSuccess()
     {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);

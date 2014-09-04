@@ -1,22 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "89dac568c93599e2c52366d0fd5c2d86",
+    "hash": "b2c9c80658a49679dc26cbfd67e94def",
     "packages": [
         {
             "name": "packfire/logger",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/packfire/logger.git",
-                "reference": "1.0.0"
+                "reference": "13e72a46d167e560a992ea9e28053d9d6af88106"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/packfire/logger/zipball/1.0.0",
-                "reference": "1.0.0",
+                "url": "https://api.github.com/repos/packfire/logger/zipball/13e72a46d167e560a992ea9e28053d9d6af88106",
+                "reference": "13e72a46d167e560a992ea9e28053d9d6af88106",
                 "shasum": ""
             },
             "require": {
@@ -33,11 +34,13 @@
             "authors": [
                 {
                     "name": "Sam-Mauris Yong",
-                    "email": "sam@mauris.sg"
+                    "email": "sam@mauris.sg",
+                    "homepage": "http://mauris.sg/",
+                    "role": "Developer"
                 }
             ],
             "description": " A standard logger that implements Psr/Log ",
-            "time": "2013-05-28 22:33:49"
+            "time": "2014-01-04 01:49:49"
         },
         {
             "name": "psr/log",
@@ -79,17 +82,17 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.2.4",
+            "version": "v2.2.11",
             "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "v2.2.4"
+                "reference": "b495834f2faadc533bdecf813f9ae8c509a4b52c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/v2.2.4",
-                "reference": "v2.2.4",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/b495834f2faadc533bdecf813f9ae8c509a4b52c",
+                "reference": "b495834f2faadc533bdecf813f9ae8c509a4b52c",
                 "shasum": ""
             },
             "require": {
@@ -122,23 +125,16 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "http://symfony.com",
-            "time": "2013-06-13 15:57:04"
+            "time": "2013-11-25 10:21:43"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "stability-flags": [],
+    "prefer-stable": false,
+    "platform": {
+        "php": ">=5.3.0"
+    },
+    "platform-dev": []
 }

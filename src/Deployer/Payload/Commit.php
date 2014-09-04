@@ -1,17 +1,12 @@
-<?php
-
-/**
- * Deployer
- * By Sam-Mauris Yong
- * 
- * Released open source under New BSD 3-Clause License.
- * Copyright (c) Sam-Mauris Yong <sam@mauris.sg>
- * All rights reserved.
+<?php /*
+ * Copyright (C) 2013 Sam-Mauris Yong. All rights reserved.
+ * This file is part of the asyncloader.js project, which is released under New BSD 3-Clause license.
+ * See file LICENSE or go to http://opensource.org/licenses/BSD-3-Clause for full license details.
  */
 
 namespace Deployer\Payload;
 
-/** 
+/**
  * A payload commit information
  *
  * @author Sam-Mauris Yong / mauris@hotmail.sg
@@ -22,21 +17,21 @@ namespace Deployer\Payload;
  */
 class Commit
 {
-    
+
     /**
      * The commit ID
-     * @var string 
+     * @var string
      * @since 1.0.1
      */
     private $commit;
-    
+
     /**
      * The commit message
      * @var string
      * @since 1.0.1
      */
     private $message;
-    
+
     /**
      * Create a new Commit
      * @param string $commit The commit ID of this commit
@@ -48,7 +43,7 @@ class Commit
         $this->commit = $commit;
         $this->message = $message;
     }
-    
+
     /**
      * Get the commit ID
      * @return string Returns the commit ID
@@ -58,8 +53,7 @@ class Commit
     {
         return $this->commit;
     }
-    
-    
+
     /**
      * Get the commit message
      * @return string Returns the commit message

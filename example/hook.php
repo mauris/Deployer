@@ -1,7 +1,10 @@
 <?php
 require('deployer.phar');
-use Deployer\Drivers\Github\Payload;
+use Deployer\Loader;
 
-$deployer = Payload::fromCurrent()->load(array('target' => '../'));
-$deployer->login('username', 'password'); // normally only needed when repository is private
-$deployer->deploy();
+$loader = new Loader();
+
+$loader->deploy('mauris/Deployer')->from('github')->to('../deployer');
+$loader->deploy('mauris/example')->from('github')->to('../example')->with('username', 'User01')->with('password', 'p455w0rd');
+
+$loader->load();
