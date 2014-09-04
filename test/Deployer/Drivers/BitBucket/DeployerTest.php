@@ -17,4 +17,11 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
         $object = new Deployer(new Payload($source), array('logFile' => null));
     }
+
+    public function testValidateSuccess()
+    {
+        $source = json_decode(file_get_contents('test/sampleGoodBitBucketData.json'), true);
+        $object = new Deployer(new Payload($source), array('logFile' => null));
+        $this->assertEquals('https://bitbucket.org/mauris/hooktest.git', $object->buildUrl());
+    }
 }
