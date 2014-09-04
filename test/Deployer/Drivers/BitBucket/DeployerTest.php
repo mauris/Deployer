@@ -12,10 +12,14 @@ namespace Deployer\Drivers\BitBucket;
  */
 class DeployerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @expectedException \ErrorException
+     */
     public function testValidateFail()
     {
         $source = json_decode(file_get_contents('test/sampleGoodGithubData.json'), true);
         $object = new Deployer(new Payload($source), array('logFile' => null));
+        $object->buildUrl();
     }
 
     public function testValidateSuccess()
