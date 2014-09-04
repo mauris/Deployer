@@ -26,20 +26,6 @@ class DeployerTest extends \PHPUnit_Framework_TestCase
         $this->object = $this->getMockForAbstractClass('\Deployer\Deployer', array($payload));
     }
 
-    public function testLogin()
-    {
-        $usernameProp = new \ReflectionProperty(get_class($this->object), 'username');
-        $usernameProp->setAccessible(true);
-        $passwordProp = new \ReflectionProperty(get_class($this->object), 'password');
-        $passwordProp->setAccessible(true);
-        $this->assertEquals(null, $usernameProp->getValue($this->object));
-        $this->assertEquals(null, $passwordProp->getValue($this->object));
-
-        $this->object->login('user', 'password');
-        $this->assertEquals('user', $usernameProp->getValue($this->object));
-        $this->assertEquals('password', $passwordProp->getValue($this->object));
-    }
-
     public function testExecute()
     {
         $this->assertTrue(method_exists($this->object, 'execute'));
